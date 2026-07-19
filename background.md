@@ -53,7 +53,7 @@
 - `suite_whatsapp_ai`
 - `suite_serial_trace`
 - `suite_consignment`
-- `suite_self_ai_translate`此模块不会再维护可能会下架
+
 
 ### ElectroState自用模块
 - `es_wa_retail`（Odoo2 零售号）
