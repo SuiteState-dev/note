@@ -16,7 +16,7 @@ https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/china_mark
 
 ## odoo19_accounting_mechanics.md
 odoo19实测笔记：估值架构基线，总账与库存分裂，成本法与按 Lot 估值，Landed Cost，绕开采购—销售链的估值事件，报表与毛利，期末关账等.
-https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/china_market_positioning.md
+https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/odoo19_accounting_mechanics.md
 
 <!-- 以后新增示例：
 ## ooh_project.md
