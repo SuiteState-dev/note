@@ -21,6 +21,10 @@
 
 ## 2.基础设施与开发工作流
 - **VPS**：Vultr Tokyo(24$/月 2 vCPU/4GB RAM + 100GB）；Reserved IP。用作 Claude Code 工作站 + 在中国时的网络出口。部署了odoo19社区版作为SuiteState的业务系统。
+2026-07-25 VPS Odoo Community 已 systemctl disable（主动停用，非故障）
+恢复：sudo systemctl enable --now odoo
+Nginx 反代配置保留，停用期间访问 erp.suitestate.com 返回 502 属正常
+
 - **开发工作流**：本地VS code → git push → odoo.sh生产分支。
 
 - **DB1（主库）**：ElectroState B2B 主业务 odoo.sh19.
