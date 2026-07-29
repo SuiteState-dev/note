@@ -12,7 +12,7 @@
 | **域 / Scope** | **Odoo accounting 的系统机制。** 目前覆盖两个场景:**① 存货估值 ↔ 总账**(B-01 ~ B-35, B-47, B-49, B-57 ~ B-59)、**② 制造成本**(B-34, B-36 ~ B-52)。<br>脊梁是 **[B-13](#b-13) 总定理**(两本账 / 三道门)—— 两个场景都是它的推论落地。 |
 | **编号约定 / Numbering** | **`B-xx` 是稳定 ID,永不重编。** 章节号只是导航层。外部引用一律用 `B-xx`。 |
 | **合并说明** | **2026-07-15** — 原 `odoo19_verified_behaviours.md` + `odoo19_manufacturing_cost.md` + `odoo19_index.md` **三文件合并为本文件**。理由:决策问题天然跨场景(例:"生产库位配什么科目" = B-13 门② + B-39 + B-47 + B-51),分文件必然发漏上下文。`B-xx` ID 与锚点全部沿用,零迁移成本。测试规格(`odoo19_test_specs.md`,面向开发分支)是不同受众,**仍独立**。 |
-| **最后更新 / Updated** | **2026-07-19** — 新增 **B-57 / B-58 / B-59**（landed cost 零库存幽灵单价 + 重估过的账单撤销 + 开票早于发货的成本发散）。**B-13 / B-17 / B-27 打修订标**（见「旧条目修订」表）。B-17 原文「差异科目」措辞作废，落点定论为 **LC 成本行 `account_id`**。<br>**2026-07-15** — 合并 + 新增 **B-47 ~ B-56**(periodic 完整机制 + real_time 回填/跨期人工错期:T-10 ~ T-18)。**B-13 / B-35 / B-39 / B-45 / B-46 / B-47 / B-51 打修订标**(见两个「增补」章 + 「旧条目修订」表)。**`real_time` 跨期人工错期这条线正式闭合**(机制根因 [B-54](#b-54) → 对策可行性 → 对策边界 [B-55](#b-55))。 |
+| **最后更新 / Updated** | **2026-07-27** — [B-28](#b-28) 加「关账口径量化 + standard 成本下 `value_manual` 惰性」补记(实机验证 ✅);新增 **[B-60](#b-60)**（`account_type` 静默继承，科目表主数据坑）。<br>**2026-07-19** — 新增 **B-57 / B-58 / B-59**（landed cost 零库存幽灵单价 + 重估过的账单撤销 + 开票早于发货的成本发散）。**B-13 / B-17 / B-27 打修订标**（见「旧条目修订」表）。B-17 原文「差异科目」措辞作废，落点定论为 **LC 成本行 `account_id`**。<br>**2026-07-15** — 合并 + 新增 **B-47 ~ B-56**(periodic 完整机制 + real_time 回填/跨期人工错期:T-10 ~ T-18)。**B-13 / B-35 / B-39 / B-45 / B-46 / B-47 / B-51 打修订标**(见两个「增补」章 + 「旧条目修订」表)。**`real_time` 跨期人工错期这条线正式闭合**(机制根因 [B-54](#b-54) → 对策可行性 → 对策边界 [B-55](#b-55))。 |
 
 ---
 
@@ -195,6 +195,12 @@
 | **[B-54](#b-54)** | 🔴🔴 `_post_labour` GL 日期硬编码 today,人工成本无法回填到过去期 | 🔴🔴 |
 | **[B-55](#b-55)** | 🔴🔴 [B-51](#b-51) payroll 对冲只在 `periodic` 成立;`real_time` 跨期人工错期结构性、关账不可修;对策=手工可逆预提(mrp WIP 向导补不了) | 🔴🔴 |
 | **[B-56](#b-56)** | `periodic` 跨期 OVH 摆动对称(工资早+90/生产早−90);SOP 双向警告,看累计 | 🟡 |
+
+### 🆕 场景 ③ · 科目表主数据(2026-07-27 增补)
+
+| ID | 条目 | 等级 |
+|---|---|---|
+| **[B-60](#b-60)** | 新建 `account.account` 不填 `account_type` → 静默继承 code 排序前一科目的类型(`bisect_left`),批量导入可致类型漂移 | 🟡 |
 
 ---
 ---
@@ -2101,6 +2107,18 @@ manual (product.value)  >  bill / invoice  >  PO / SO  >  standard price
 > **`value_manual` 的源码注释是 "Useful for testing and custom valuation"。**
 > **Odoo 知道 [B-14](#b-14) 这类缺口存在，它的兜底方案就是「让你手工调 + 记一本 log」，
 > 而不是自动路由到某个科目。这是「no replay of past data」设计哲学的必然结果。**
+
+### 📌 2026-07-27 补 · 关账口径量化 + 一条成本法边界（实机验证 ✅）
+
+在 Odoo 19.0 实例上（periodic / standard 公司，`odoo-bin shell` + savepoint 回滚）把上表的两个时点、三条路径全部跑通，补两条 B-28 原文没有的确凿结论：
+
+**① 关账金额口径 —— 逐分吻合。** 手工改值当下零 `account.move`（已知），到期末关账时 `_get_stock_valuation_account_vals()` 以「`stock_value()` 真实值 − `stock_accounting_value()` 账面值」兜差，**过账金额精确等于改值幅度**：
+- 改 `standard_price` 100→130，在库 10 → 关账估值科目净增 **+300.00**；
+- 改 `lot.standard_price`（AVCO+lot）/ 改 `move.value_manual`（FIFO）→ 关账净增 **精确 = 所设值**。
+- 分录腿 = 估值(资产)Dr ↔ Stock Variation(P&L, `account_stock_variation_id`；未配退公司 `expense_account_id`；皆空则 `continue` 静默跳过)。balance<0 时 Dr/Cr 互换。**估值科目每次关账自对齐、无误差累积**（→ 呼应 [B-31](#b-31)）。
+
+**② 🔴 成本法边界：`value_manual` 在 standard 成本产品上连 L1 都不动。** 上表「Adjust Valuation（改 move.value）→ L1 ✅ 变」这格**仅对 FIFO / AVCO 成立**。standard 成本下 `stock_value = 数量 × standard_price`，与单条 `move.value` 无关 —— 改 `value_manual` 后 `real == 账面`，关账直接抛 `UserError("Everything is correctly closed")`，**既不即时也不延迟进 GL，连报表侧估值也不变**（纯 log 噪声）。
+> **落地含义**：standard 成本产品要调估值，唯一有效入口是改 `standard_price`（或 lot cost），改单条 move 的 value 是无效动作。三条手工路径**并非等价**，取决于成本法。
 
 ---
 
@@ -4772,6 +4790,43 @@ OVH 上的三条 GL:
 | ~~periodic 跨期 OVH 摆动是不是对称~~ | ✅ **对称。** 工资早 +90 / 生产早 −90,两月净平。SOP 双向警告、看累计 → [B-56](#b-56) |
 
 *(场景 ① / ② 各自 2026-07-14 之前闭合的队列,保留在各章内的原始「本轮闭合」小节,未上移,避免重复。)*
+
+---
+
+<a name="b-60"></a>
+## 附 · B-60 · 🟡 新建 `account.account` 不填 `account_type` → 静默继承「code 排序前一科目」的类型
+
+### Creating an account without account_type silently inherits the previous account's type
+
+| | |
+|---|---|
+| **等级** | 🟡（静默失真，批量导入尤甚；不报错、无警告） |
+| **状态** | ✅ 实机验证（Odoo 19.0，2026-07-27）+ 📖 源码确证 |
+| **域** | 科目表主数据（非估值/制造，独立坑） |
+
+**现象**：`account.account.account_type` 是 `required=True` 但 `default=None`。建科目时**不传 `account_type` 也不会报错** —— 它被静默填成「按 `code` 排序紧挨在前一个科目的类型」。
+
+**实测**（`create` 后回滚，未落库）：
+
+| 新建 code | 排序前一科目 | 得到的 account_type |
+|---|---|---|
+| `4000001`（紧跟 `400000` **income**） | 400000 = income | **income** |
+| `4430001`（紧跟 `443000` **expense**） | 443000 = expense | **expense** |
+
+→ 继承的是**前一科目的类型**，不是某个固定默认（两次结果不同证明）。
+
+**源码**：类型由 `account_account.py` 的 `_get_closest_parent_account()` 用 **`bisect_left`** 在已排序 code 序列里取左邻，**与 `parent_id` 无关**（v20 的 `parent_id` 树是另一回事，此坑纯按 code 邻接）。
+
+### 🔴 为什么危险 —— 批量导入
+
+同一份导入数据，若干行没写 `account_type`，最终类型取决于**它在 code 序列里落在谁后面** —— 库里已有科目不同、或导入顺序不同，**同一份 CSV 可得到不同的类型分布**，且全程静默。
+
+**对策**：
+- ✅ 导入/建科目**永远显式写 `account_type`**，不要依赖默认。
+- ✅ 导入后按 `code` 排一遍，核对每个类型是否符合预期（尤其类型边界附近的 code）。
+- ⚠️ 类型错了不只是标签问题 —— 它决定该科目是往来/损益/资产/流动性…直接影响报表归类与对账行为。
+
+> **这条对 19.0 现网交付即有影响**，与后续 v20 的科目树改版（`account.group` → `parent_id`）是两件独立的事，不要混。
 
 ---
 ---
