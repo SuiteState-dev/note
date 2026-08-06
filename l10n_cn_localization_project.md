@@ -1,6 +1,6 @@
 # Odoo 19 中国本地化项目 — 上下文与材料档
 
-版本：v1（2026-08-07 建）
+版本：v2（2026-08-07，对齐 `l10n_cn_design.md` draft-23 / R22 完工）
 用途：跨窗口上下文恢复。读此一份即可接手 `suite_cn_localization` 线的讨论，不必重发文件包。
 证据分级：`verified` = 本轮解析自导出件/源码本身；`observed` = 界面观察或单点样本；`unknown` = 未查。
 
@@ -25,9 +25,9 @@
 | 模块 | 内容 | depends | 层 | 状态 |
 |---|---|---|---|---|
 | `suite_cn` | 聚合伞，纯 depends，永不放代码 | 三个子模块 | — | 19.0.1.0.0 |
-| `suite_cn_coa` | 科目分级树（`account.group`）+ 原生 TB/GL 中文化说明 | account, account_reports | 呈现层 L0 | 19.0.1.0.0 |
-| `suite_cn_statement` | BS/PL 年初/累计列 + 中式报送版式 XLSX 渲染器 | account, account_reports, l10n_cn_reports | 呈现层 L0 | 19.0.1.1.0 |
-| `suite_cn_cashflow` | 现金流量项目维度 + ASSBE 直接法 22 行报表 | account, account_reports | 呈现层 L1 | 19.0.1.4.0 |
+| `suite_cn_coa` | 科目分级树（`account.group`）+ 原生 TB/GL 中文化说明 | account, account_reports | 呈现层 L0 | 19.0.1.1.0 |
+| `suite_cn_statement` | BS/PL 年初/累计列 + 中式报送版式 XLSX 渲染器 | account, account_reports, l10n_cn_reports | 呈现层 L0 | 19.0.1.2.0 |
+| `suite_cn_cashflow` | 现金流量项目维度（**借/贷双默认**）+ ASSBE 直接法 22 行报表 | account, account_reports | 呈现层 L1 | 19.0.1.5.0 |
 | `suite_cn_cashflow_statement` | 桥：现金流量 × 版式行次映射，`auto_install` | 上二者 | 呈现层 L0 | 19.0.1.1.0 |
 
 **依赖铁律**：除桥外，任何子模块不依赖兄弟、全部直挂官方。伞只做 depends，HARD BOUNDARY 写死在 manifest 注释里。此举避免重蹈 `l10n_cn_sme`（共享代码底座、一改全连锁）的覆辙。
@@ -46,7 +46,7 @@
 | **P-02** | 顺框架 | 不重新引入 Odoo 已删除对象，不覆写核心计算（余额/对账/报表取数骨架）。可接受：新增字段、新增模型、在既有 hook 插分支且留 fallback |
 | **P-03** | Enterprise 前提 | 允许依赖 `account_reports`，不为社区版降级适配 |
 | **P-04** | fallback 优先 | 未配置本地化数据的公司，行为与未装模块一致 |
-| **P-05** | **可移交性**（R22 拟增） | 每个新增维度须：① 以标准 Odoo 对象承载 ② 具备不依赖本模块的导出通道 ③ 文档列明卸载会丢什么 |
+| **P-05** | **可移交性**（R22 已入 §2） | 每个新增维度须：① 以标准 Odoo 对象承载 ② 具备不依赖本模块的导出通道 ③ 文档列明卸载会丢什么 |
 
 **呈现层做、流程层不做**（§11.0 决策规则）：呈现层只读既有数据、出错当场可见且有 BS 勾稽做外部锚点；流程层写入账簿，出错会在客户账簿留下需人工冲销的错误分录。
 
@@ -60,15 +60,15 @@
 | L1 加维度 | `account.move.line.cn_cash_flow_item_id` | **维度数据必然丢失**（原生无此概念），会计数据不变 |
 | L2 动核心 | 无 | — |
 
-**已知残留两处**：
+**残留现状（R22 后）**：
 
-1. `cn_cash_flow_item_id` 卸载删列，分类数据不可逆丢失。已写入 README/manifest（E-6）。`uninstall_hook` 先 SQL 置空引用，保留 `ondelete='restrict'` 的运行期保护。
-2. **`suite_cn_coa` 的孤儿认领**（R22-T2 待修）：客户手工建的 `account.group` 若前缀撞上目标前缀，会被认领、**改名**（原名无备份）、并在卸载时删除。另 `_adapt_parent_account_group` 会重写该公司全部 group 的父链，含外来组，卸载后不自动还原。
+1. `cn_cash_flow_item_id` 卸载删列，分类数据不可逆丢失。已写入 README/manifest（E-6）。`uninstall_hook` 先 SQL 置空引用，保留 `ondelete='restrict'` 的运行期保护。**P-05 盘点认定这是唯一无导出通道的维度**，导出功能未实现（下轮输入）。
+2. ~~`suite_cn_coa` 孤儿认领~~ **已修（R22-T2）**。修复过程发现一条更深的问题：`account.group.parent_id` 是 **`ondelete='cascade'`**——删自建组会级联删掉挂其下的用户认领组，比「认领组被改名后删除」更隐蔽。处置 = 新增 `suite.cn.coa.adopted.group` 台账（记原名全语言 jsonb + 原父）；`uninstall_hook` 先释放认领组（整列 jsonb 精确重置、仅释放不删）→ 删自建组前把幸存组从待删父摘开 → 末尾 `_adapt_parent_account_group` 重建前缀父链。V1–V5 全过。
 
 **贴着核心的两处 override**（均未违反 P-02，但需知情）：
 
 - `account.move.line.write()`（cashflow）——aml 上最热的方法，`if 'account_id' in vals` 守卫使无关写入成本可忽略；风险在与其他模块 write override 的叠加顺序
-- `account.report._init_options_buttons()`（statement）——全局 override，对任何报表每次 `get_options` 跑一次 search（R22-T3 拟加前置短路）
+- `account.report._init_options_buttons()`（statement）——全局 override。**R22-T3 已加 `chart_template ∈ (cn/cn_common/cn_large_bis)` 前置短路**，非 CN 公司搜索 0 次
 
 ---
 
@@ -218,19 +218,26 @@
 
 ## 6. 待办与未决
 
-### 6.1 R22 任务书（已下发开发分支）
+### 6.1 R22 已完工（draft-23，全实测）
 
-| 编号 | 内容 | 性质 |
-|---|---|---|
-| T1 | 现金流量项目借贷方向拆分（+migration，单独一轮） | 唯一设计改动 |
-| T2 | `suite_cn_coa` 孤儿认领残留（原名/父链备份还原） | 卸载洁净性 |
-| T3 | `_init_options_buttons` 前置短路 | 性能 |
-| T4 | 文档规格更正四条（栏数 / 数量核算载体 / §14 加中国比较系 / §7.2 更新） | 文档 |
-| T5 | 新增 P-05 可移交性 + 维度导出通道盘点 | 原则 |
+| 编号 | 结果 |
+|---|---|
+| T1 | 现金流量项目借贷拆分。`account.account` 加 `cn_default_cash_flow_item_debit_id`/`_credit_id`；方向 = **`balance` 符号**（`balance<0`→贷方侧，零额取借方侧；实测 create 阶段 misc 分录与发票行 debit/credit/balance 均齐全）；`@api.depends` 扩为 `('account_id','balance')`。compute/write 重排为「**仅当值为空或等于旧方向自动值才重带，否则保留手工**」——旧写法 `if default: 无条件覆盖` 在翻到有默认的一侧时会覆盖手工值，重排后才真正实现 docstring 声称的语义。旧单字段 deprecated 留一轮 + post-migration 等值拷入。V1–V9 全过；migration 存量 move line 不动、`-u` 无 mass recompute；500 行 create 1.38s / 整批翻转 1.73s |
+| T2 | 孤儿认领卸载还原（见 §3 残留现状） |
+| T3 | `_init_options_buttons` 前置短路 |
+| T4 | 文档更正四条全部落地（八栏 / 数量核算载体 / §14.1 金蝶比较系 / §7.2 加两项待决） |
+| T5 | P-05 入 §2 + 盘点表（`cn_cash_flow_item_id` 无导出通道 = 唯一缺口） |
+| — | §11.3 增「业务凭证模板规则引擎」否决条目 |
 
-**T1 的架构分叉已定**：自动值 vs 手工值的判定采**等值启发式**（沿用现行「值 == 方向对应侧默认 → 视为自动」），不引入 `is_manual` 布尔——后者对存量行只能一刀切，两种切法都会静默改变历史分类。将来若需精化，升级路径是**记录自动值来源**（存 `(account_id, 方向)`），对存量 null 时自然回退到启发式，不需为历史数据编造答案。此项记入 §7.2 备选，不在本轮做。
+**T1 的架构分叉决策（保留备查）**：自动 vs 手工采**等值启发式**，不引入 `is_manual` 布尔——后者对存量行只能一刀切，两种切法都会静默改变历史分类。将来若需精化，升级路径是**记录自动值来源**（存 `(account_id, 方向)`），对存量 null 时自然回退到启发式，不为历史数据编造答案。
 
-**T4-1 修正**：栏数规格按产品线分层——期初/本期/本年累计/期末**四组八栏是共性**（星辰），年初一组是大型版加的（星云十栏）。首版做八栏，十栏作设置项。
+### 6.1b R22 后待补（本文件 v2 提出，尚未回写设计文档）
+
+| 项 | 内容 |
+|---|---|
+| **T1-V10 红冲/反过账方向测试** | `_reverse_moves` 冲回时借贷对调 → `balance` 符号翻转 → 带出**对侧**流量项目。收款与其冲回会落进两个不同行次；行20 净增加仍对，但**行次层面双边虚增**。中国实务红冲频繁，须实测确认是否需对红字凭证特判。**先测不预设结论** |
+| **§14.1 银行余额调节表判定更正** | 现标「❌无（形态源自金蝶，非缺口推断依据）」= 铁律用宽了。**企业账/银行账双栏对照 + 未达账项四类是中国法定形态**（出纳月末必做，各家产品皆有），非金蝶架构产物。应改判「❌ 无（**真缺口**）」并进 §11.7。<br>**区分判据（建议写进 §14.1 引言）**：问该形态在中国是否法定/通用，而不是问它在金蝶里长什么样。铁律**用窄**会把金蝶架构产物误当缺口（业务凭证模板），**用宽**会把中国法定形态误判掉（本例）——两种相反的失败 |
+| **deprecated 字段删除窗口** | `cn_default_cash_flow_item_id` 标了「留一轮」但未定删除版本。须指定版本号并预留 migration 位；同时确认视图、`data/draft/` ASBE 段、README 字段说明无残留引用 |
 
 ### 6.2 §11.7 冻结/待评估清单（知识不冻，开工冻）
 
@@ -244,7 +251,7 @@
 | 智能结转凭证的**分录级**材料 | 查凭证打印 PDF，或本年利润科目明细账 | 中（M4 解冻时需要） |
 | 账簿「体系」字段的机制 | 账簿列表 | 中（坐实 §4.2） |
 | 金蝶 `mergeType` 编码枚举 | 业务凭证模板→合并规则界面 | 低（仅流程层需要） |
-| 分录能否覆盖科目带出的现金流量项目 | 录一笔凭证试 | 低 |
+| 分录能否覆盖科目带出的现金流量项目 / 一笔分录能否拆多个流量项目 | 录一笔凭证试；中国实务口径须另确认 | 低（已入设计 §7.2） |
 
 **已知空缺**：ASBE 现金流量表的**间接法补充资料**（附表），`suite_cn_cashflow` 现为 ASSBE 22 行直接法单套，完全未覆盖。ASBE 线解冻时是明确缺口。
 
