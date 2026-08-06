@@ -18,6 +18,21 @@ https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/china_mark
 odoo19实测笔记：估值架构基线，总账与库存分裂，成本法与按 Lot 估值，Landed Cost，绕开采购—销售链的估值事件，报表与毛利，期末关账等.
 https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/odoo19_accounting_mechanics.md
 
+
+## l10n_cn_localization_project.md
+ Odoo 19 中国本地化项目 — 上下文与材料档:模块结构,设计原则及其他说明.
+https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_localization_project.md
+
+
+## l10n_cn_asbe_chart_reference.csv
+ASBE企业准则科目表
+https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_asbe_chart_reference.csv
+
+
+## l10n_cn_ledger_form_matrix_supplement.md
+中式账簿与凭证版式矩阵 — 补充件
+https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_ledger_form_matrix_supplement.md
+
 <!-- 以后新增示例：
 ## ooh_project.md
 合伙人户外广告项目的方案设计与搭建记录：广告位建模、会计利润周期、地图看板。
