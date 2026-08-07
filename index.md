@@ -28,6 +28,10 @@ https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_lo
 ASBE企业准则科目表
 https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_asbe_chart_reference.csv
 
+## l10n_cn_ledger_form_matrix.md
+中式账簿与凭证版式矩阵（金蝶星辰打印模板解析）
+https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_ledger_form_matrix.md
+
 
 ## l10n_cn_ledger_form_matrix_supplement.md
 中式账簿与凭证版式矩阵 — 补充件
