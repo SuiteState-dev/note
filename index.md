@@ -26,6 +26,10 @@ https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_lo
 https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_kingdee_material.md
 
 
+## l10n_cn_status.md
+项目进度状态
+https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_status.md
+
 ## l10n_cn_asbe_chart_reference.csv
 ASBE企业准则科目表
 https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_asbe_chart_reference.csv
