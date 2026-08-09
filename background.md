@@ -1,6 +1,9 @@
 ## 0. 快速导航
 
-> **本档版本：2026-08-08 v2**（§8 加第 11 条「入口可见 ≠ 入口可用」；§9 「报税上传」节升级为「申报侧不存在直连」并拆开三条通道、备案节补法条与产品结论、新增「中国会计软件的法定功能规范」、凭证字实务升 `verified`）
+> **本档版本：2026-08-10 v6**（§7 新增 **B-53 ~ B-59**：lock date 留痕 / `account.account` 19.0 扁平+v20 版本锚 / `account_codes` D-C 三条边界 / `ir.sequence` 三键取号 / `account_type` 静默继承 / `sum_if_pos`-`-sum_if_neg` 符号分流 / subformula 引擎归属）
+> v5（命名规矩：「和界鸿源」只用于真实实体在电子税务局侧的实测；开发库事实一律称「dev 库」—— 详见项目档 §0.2）
+> v4（§7 B-47~B-52 补「R17-C1 旧结论不完整」的溯源；§8 第 12 条「查到 0 ≠ 真为 0」+ 第 13 条「实测事实必须落主题索引，流水账不是索引」）
+> v2（§8 加第 11 条「入口可见 ≠ 入口可用」；§9 「报税上传」节升级为「申报侧不存在直连」并拆开三条通道、备案节补法条与产品结论、新增「中国会计软件的法定功能规范」、凭证字实务升 `verified`）
 
 1. 商业与品牌架构
 2. 基础设施与开发工作流
@@ -8,7 +11,7 @@
 4. 已发布apps.odoo  / 内部模块清单（**⚠️ 截止2026 JUL**）
 5. Apps Store 发布规则
 6. WhatsApp 架构
-7. Odoo 19 技术约束（踩坑合集）
+7. Odoo 19 技术约束（踩坑合集）—— 含 **B-47 ~ B-59**
 8. 交付验收惯例（跨项目）
 9. 中国财务与税务市场事实（跨项目）
 
@@ -149,6 +152,136 @@ Nginx 反代配置保留，停用期间访问 erp.suitestate.com 返回 502 属�
 
 ---
 
+### Odoo 19 合规机制边界（`verified`，源码 + live 复证，2026-08-08）
+> 来源：l10n_cn R27-T2-A 只读实测（源码 + live 复证）。任何中国/欧盟合规项目会重复问同一批问题，故进 background。
+>
+> ⚠️ **溯源**：本组事实中的「哈希挡改删」「`hard_lock_date` 不可逆」，**R17（三个窗口前）的 C1/C3 已实测过**，但只落在开发分支变更记录里、无主题索引，导致 R27 重推。**重推纠正了一条错**：C1 的「删除 BLOCKED」是全称表述，实际删除靠 `restrictive_audit_trail` 且中国可关（B-49）；C1 也没给字段全集，漏了 B-47 的币种/汇率缺口。→ **一条只覆盖部分字段的实测，不要写成全称结论。**
+
+- **B-47 哈希链的确切保护面**：机制 = `account.journal.restrict_mode_hash_table`（Boolean，**默认关**，Journal→Advanced Settings，`account.group_account_readonly` 可见，不需开发者模式）。保护字段 = move 级 `name/date/journal_id/company_id` + line 级 `name/debit/credit/account_id/partner_id`，改则 `UserError`。🔴 **`currency_id` / `amount_currency` 不在保护面**（多币种主体的事后篡改哈希不拦；同币种行受 "entry not balanced" 平衡约束挡，非哈希挡）。
+- **B-48 哈希开启不可逆（安全方向）**：journal 一旦有任一哈希分录，`restrict_mode_hash_table` 改不回 False（`UserError: You cannot modify the field … of a journal that already has accounting entries`）。→ 可对外声明「启用后不可关闭」，**没有"可逆无留痕"漏洞**。
+- **B-49 「不可删除」不靠哈希，靠审计追踪，且中国可逆**：判据 = `move.posted_before AND company.restrictive_audit_trail`。而 `force_restrictive_audit_trail` 只有 DE 无条件 / IN 有条件强制，**CN = False** → CN 公司开启后能关回 False。关闭有 `tracking=True` 留痕（写 mail.message）。**改=哈希挡、删=审计追踪挡，两套机制、两种可逆性，别混为一谈。**
+- **B-50 硬锁定日期只进不退**：`res.company.hard_lock_date`（v19 新增）live 实测只能前移，回退被挡（"A new Hard Lock Date must be posterior (or equal) to the previous one"）= **不可逆**。它挡整期间任何写入（**含 `currency_id`/`amount_currency`）且挡删除**。
+  → **合规声明的正确形态 = 哈希链（字段级）+ 硬锁定日期（期间级）双层**，而非「哈希 + 一个缺口」。**月结上锁 = 实施必做项**，缺此步则"不可篡改/不可删除"仅对开哈希的开放期成立。
+  ⚠️ **不可逆意味着不能在唯一的验证载体上试手**：设错日期退不回来，先在 dev 库验行为、生产库按流程设。
+- **B-51 编号与断号**：哈希链按 `sequence_prefix` 分链；`report_hash_integrity` 检出断号（"A gap has been detected in the sequence"），报首尾哈希 + 状态（verified/corrupted/no_data）。
+- **B-52 `account.move` 不走 `ir.sequence`**：继承 `sequence.mixin`，用 `_get_last_sequence` 正则那套。→ 自建 (公司×凭证字×期间) `ir.sequence.use_date_range` 三键取号与 `account.move.name` **两套独立机制、零污染**，卸载删列原生编号不受影响。配套：过账才分配号（草稿 name=`/`）；作废（cancel/draft）号永久保留跳号，删除（unlink）号释放可复用；反过账取新号不复用（`name` `copy=False`）。
+
+### B-53 ~ B-59（l10n_cn 线 R28–R30 回流，2026-08-10）
+> 承接上节 B-47~B-52 的编号。来源：l10n_cn R28（只读探查）、R29（M3a 交付 + T2 证伪）、R30-P1（原生机制探查）。
+
+**B-53 五个 lock date 全带 `tracking`，软锁可自由回退（19.0，`verified live`）**
+
+`account.move` 相关的五个 lock date（soft / hard / tax / sale / purchase）**全部 `tracking=True`**，chatter 留「谁 / 何时 / 旧值→新值」。
+`_validate_locks` **只挡 `hard_lock_date`** → **软锁可以自由往回调**。
+⚠️ **必须与 B-50 对读**：`hard_lock_date` 不可逆是**特例**，别只见 B-50 就以为 Odoo 的锁都不可逆。
+**含义**：中式「结账」不需要自建对象 —— 向导写 lock date，留痕由原生承担（项目档 §6.10 决策 D）。
+
+---
+
+**B-54 `account.account` 在 19.0 是扁平的（🔴 版本敏感，v20 已变）**
+
+🔴 **本条结论仅对 Odoo 19.0 成立。v20 已把 `parent_id` / `parent_path` / `code_path` 加回 `account.account`、并删除 `account.group`；转录 / 引用务必带版本锚。**
+
+**19.0（`verified live`）**：
+- `account.account` **无** `parent_id` / `is_group` / `deprecated`，**扁平**；
+- **父科目可直接记账，无原生守卫** → 前缀汇总同时吃父与子，**父子混用即重复计数**；
+- `code` = `Char(64)`，同公司唯一强制，`.` 合法；
+- 删有分录的账户被挡；停用父不级联子；**无 parent FK，故 `account.group` 的 `ondelete='cascade'` 坑不适用**。
+
+**v20 补充（`observed`，未亲验）**：「父科目可记账」在 v20 是**官方明示的设计意图**（commit message），纯分组父级靠 `active=False` 表达 → 守卫应取「告警」而非「硬约束」，硬约束是在跟框架方向对着干。
+
+---
+
+**B-55 `account_codes` 的 `D`/`C` 方向后缀 —— 三条边界（19.0）**
+
+**能力（`verified`，源码 `account_reports/models/account_report.py:4211-4223 / 4272 / 4362-4370`）**：引擎**有** `D` / `C` 方向后缀（`2202C` = 该前缀下各账户净额为**贷**才计、否则 0；`2202D` 反之）。**推翻「`account_codes` 表达不了借贷方向」的绝对表述。**
+
+- **第一条边界（粒度）**：D/C 在**每个 `account.account` 上判方向**（`GROUP BY account_id` 后逐账户比较），**不是明细 / 往来伙伴粒度**。→ 只有客户**把往来明细编成子账户**时才等于财政部的「明细贷方余额」；单一科目 + `partner_id` 的账套，账户级 D/C 拆不了伙伴。
+- **第二条边界（算符性质，R29-T2 实测证伪）**：**`D`/`C` 是拆分算符不是列报算符。** 单改一行往来（如 `1122D`）= 半个变换 —— 被丢弃的贷额**有归宿**（负债侧预收款项），不是消失。**必破表内勾稽**：夹具 `1122.001 借500 / 1122.002 贷200` + `1122D` → `_cn_crossfoot_breaks` 报「流动资产合计差 **−200 structural**」。**正确用法 = 成套同改，被分出的部分必须有落点。**
+- **第三条边界（单一来源，R30-P1）**：`sum_if_pos` / `-sum_if_neg`（见 B-58）只对**单一来源**成立。多来源合并域时「先合并再判方向」≠「分别判方向再相加」—— 属**公式构造 + 原文口径**问题，不属机制能力问题。**当前无适用场景**，记录备查。
+
+⚠️ **第二条与 B-58 的表内中性证明必须对读**：同样是「方向」，一个破勾稽、一个中性，**差别在是否给被分出的部分安排了落点**。
+
+---
+
+**B-56 `ir.sequence` + `use_date_range` 可做三键取号，完全不碰 `move.name`（19.0，`verified`）**
+
+需要「跨 journal 统一 + 按期间归零」的第二套编号（如中式凭证号 `记-1`），**别去改 `account.move.name`**（它走 `sequence.mixin`，按 journal 过滤且名字不含年月就只能 `reset='never'`，见 §7 会计模型语义）。
+`ir.sequence` 自带 `use_date_range` + `ir.sequence.date_range`，可做 **(公司 × 类别 × 期间) 三键**取号。
+**R29-T1 实测坐实**：`implementation='standard'` 允许断号；过账（`_post`）时分配；作废草稿不释放、删除随记录消失（**跳号不释放 = 接受 gap**）；反过账另编新号；**零 `move.name` 副作用**。
+⚠️ 若该编号会被打印归档，**呈现层动态重排不安全** —— 回插一条日期靠前的记录会让后续号整体挪位，而已归档的号不可变。**这类编号必须落存储字段、取号即定。**
+
+---
+
+**B-57 建科目不填 `account_type` 会按 code 字典序静默继承（19.0 `verified`，v20 未亲验）**
+
+建 `account.account` **不填 `account_type`** 时，`_compute_account_type`（`@api.depends('code')`）按 **code 字典序邻近**静默继承：`bisect_left(codes_list, code) - 1` 取**字典序前一个**账户的 `account_type`（`tag_ids` 同法，`_compute_account_tags`）；**仅当为全库首个 code 才落 `default_value='asset_current'`**。
+源码：`odoo/addons/account/models/account_account.py:604-606, 613-636`。
+
+**后果**：批量建中式科目若漏填 `account_type`，**科目能建、报表照跑、不报错，只在报表上少一块**。
+例：`1601 固定资产`（应为 `asset_fixed`）若不填，字典序前一个是 `15xx` 长期投资类（`asset_non_current`）→ 静默继承 `asset_non_current`，固定资产从 BS 的固定资产行掉出去。
+
+🔴 **建科目务必显式给 `account_type`，勿依赖继承。** 比 B-54 更容易在批量建科目时坑人。
+**Safi 述 19.0 / v20 两分支共有，v20 未亲验。**
+
+---
+
+**B-58 `domain` 引擎的 `sum_if_pos` / `-sum_if_neg` = 单一来源按符号分流、双侧正数列示（19.0）**
+
+**语义（`observed`，源码）**：
+- `sum_if_pos` / `sum_if_neg` 判**整行聚合净额**（`total_sum`，`:4181`，注释明写**不可逐 `query_res` 判**）；
+- `-` 前缀经 `safe_eval` 处理（`:3510 / :3531`），把负净额**取正**；
+- `0` 归入正号侧（`>=`，`:4182`，「0 视为正」）；
+- 阈值不满足时返回 **`0`**（非 `None`、非塌行）。
+
+**装配式（一段式，两行同源同 formula、分挂两个 subformula）**：
+```
+R_recv: engine=domain  formula=[('account_id.code','=like','1122%')]  subformula=sum_if_pos
+R_prep: engine=domain  formula=[('account_id.code','=like','1122%')]  subformula=-sum_if_neg
+```
+
+**四夹具实测（`verified`，temp report + dev 库，全 rollback）**：
+
+| 夹具 | 造数 | 实测 R_recv / R_prep | 正确口径 |
+|---|---|---|---|
+| F1 | `1122` 借 500 | 500 / 0 | ✅ |
+| F2 | `1122` 贷 200 | 0 / **200（正数）** | ✅ |
+| F3 | `1122.001` 借 500 / `1122.002` 贷 200 | **300 / 0** | ✅ 科目级净额，非逐账户 |
+| F4 | `1122` 无余额 | 0 / 0 | ✅ 不塌行、不报错 |
+
+🔴 **F3 是区分性夹具**：`D`/`C` 后缀在同一夹具下给出 500 / 200 —— **本机制与 D/C 后缀在子账户场景下结果不同，二者不可互换。**
+
+**表内中性证明**：恒等式 `R_recv − R_prep = 科目净额` 逐夹具成立（500 / −200 / 300 / 0）⇒ 该分流把单行净额拆成资产侧正 + 负债侧正，**合计不变**。与 **B-55 第二条边界对读**。
+
+**官方先例（`observed`，逐字）**：越南 TT200 资产负债表 `l10n_vn_reports/data/balance_sheet.xml` —— 短期应收账款 `1311%` 挂 `sum_if_pos`（`:264`）、预付供应商 `3311%` 挂 `sum_if_pos`（`:283`）、负债侧以正数列示贷方净额挂 `-sum_if_neg`（`:1689 / 1708 / 1727 / 1756`）。旁证：西班牙 `l10n_es_reports/data/full_balance_sheet_report_data.xml`。法国 `l10n_fr_reports` 用 `aggregation` + `if_above` / `if_below` 分两行，但那是**净额对冲不是正数列示**。
+
+---
+
+**B-59 条件类 subformula 分挂两套引擎，`account_codes` 不能直接挂（19.0，`observed`）**
+
+源码 `account_reports/models/account_report.py`：
+
+| 关键字 | 适用 engine | 拼写 / 参数 | 行号 |
+|---|---|---|---|
+| `sum` | `domain` | 裸词 | :4048 |
+| `sum_if_pos` / `sum_if_neg` | `domain` | 裸词，可带 `-` 前缀 | :4169–4193 |
+| `count_rows` | `domain` | 裸词 | :4071 |
+| `if_above(CUR(x))` | `aggregation` | 带货币前缀，如 `if_above(CNY(0))` | :3899 |
+| `if_below(CUR(x))` | `aggregation` | 同上 | :3896 |
+| `if_between(CUR(x),CUR(y))` | `aggregation` | 双参 | :3902 |
+| `if_other_expr_above/below(code.label,CUR(x))` | `aggregation` | 判**另一表达式**的值 | :3772–3800 |
+| `round(precision[,method])` | `aggregation` | 如 `round(-2,HALF-UP)` | :3845 |
+| `cross_report(report_xmlid)` | `aggregation` | markup，非计算 | :3859 / :3596 |
+| `ignore_zero_division` | `aggregation` | 裸词 | :3761 |
+| `editable` / `rounding=` | `external` | —— | :3172 / :3178 |
+
+- **`sum*` 系只在 `domain` 引擎解析；`if_*` 系只在 `aggregation` 引擎解析。**
+- 🔴 **`account_codes` 引擎不能直接挂条件类 subformula。** 要用其前缀汇总 + 方向分流，须**两段式**（`account_codes` 算中间行 → `aggregation` 引用并挂 `if_above` / `if_below`）。
+- 但 `domain` 引擎的 `sum_if_pos` / `-sum_if_neg` **一段式即可**（`domain` 用 `=like` 自行汇总）→ **优先走一段式**。
+- `if_above` / `if_below` 判整个 `formula` 求值后的净额（`:3758 → :3802`），**不能取正数**（保留原符号）；要正数须另起一表达式 `-line.label` 二段负负得正。
+
+---
+
 ## 8. 交付验收惯例（跨项目）
 > 来源：l10n_cn 线 R23–R25 的界面端到端走查与逐轮复盘。贯穿教训——**程序化验收与界面使用从未对齐**。全部是「历轮验收都通过过、但问题真实存在」的类型。
 
@@ -170,6 +303,13 @@ Nginx 反代配置保留，停用期间访问 erp.suitestate.com 返回 502 属�
 11. **凡改动了「点击后发生什么」的入口，走查必须跑到终态**（向导弹出、文件落地、数据可见），不是跑到按钮可见为止。
    依据：R26 的 `_preprocessAction` 崩溃 —— Python 方法手工返回的 `ir.actions.act_window` 字典缺 `views` 键，客户端 `action.views.map()` 直接炸。三维齐验全过、11/11 live 过、按钮可见，**一点就崩**。这是惯例 1「数值正确 ≠ 用户找得到」的一个未被覆盖的子面：**入口可见 ≠ 入口可用**。
    修法：用 `ir.actions.act_window._for_xml_id(...)` 取动作（`views` 由服务端算，顺框架），或手工 dict 里显式给 `'views': [(False, 'form')]` —— 只写 `view_mode` 不够。
+12. **只读探针要先确认查的是正确载体：查到 0 ≠ 真为 0。**空结果有两种成因——真的没有，或者查错了对象（错公司 / 错库 / 未装数据 / 过滤条件不同）。回滚事务里的 0 尤其骗人，因为它看起来像一次干净的实测。
+   依据：R27-T2-B 在 dev 库的 `CN ASSBE Company`（chart 未装、0 账户）上查 `account.group`，得 0，误报「本库 0 组」；实际装了 chart 的是同库另一家 CN 公司。
+   这是惯例 2「单公司通过 ≠ 多公司通过」的同族：**惯例 2 管"通过"，本条管"没有"。**任何以"某某为 0 / 不存在"为前提的结论，先回答「我查的是哪个主体、过滤条件是什么」。
+   **配套**：还要回答「**我查的这个库是什么性质**」—— demo/测试数据上得出的结论，不能用来推真实客户的行为。R27 曾据 dev demo 库的科目表推出"客户不建二级科目"，无效。
+13. **实测得出的事实必须落主题索引，不能只落变更流水。**按时间追加的变更记录（design changelog、commit message、轮次回写）是**流水账不是索引**：下个窗口按主题找不到，只能重推一遍。
+   规矩：任何"某系统实际怎么表现"的实测结论，除了写进本轮回写，**必须同时落到一个按主题组织的位置**（本档 §7 的 B-xx，或项目档的对应节）。
+   依据：l10n_cn R17-C 组的合规机制实测，三个窗口后被 R27 完整重做。代价不只是重复劳动——**旧结论中那条不完整的表述在这三个窗口里一直被当成已结案引用。**
 
 ---
 
@@ -235,7 +375,7 @@ Nginx 反代配置保留，停用期间访问 erp.suitestate.com 返回 502 属�
 - 问「备案是用小企业会计准则还是企业会计准则」→ 答**「没有特定」** → 备案**不锁定准则口径**。对报送表样设计是好消息：表样由报送小类决定，不由备案锁死。
 - 问「软件备案是必填吗、是下拉还是手填」→ 答**「没有说要备案软件」**。
 
-🔴 **与上文法条部分冲突，冲突本身要记，不要抹平。**两种可能：① 该栏因省份/电局界面版本而异；② 执行层面已弱化（新办套餐式服务）。**结论仍待和界鸿源自己的备案报告界面确认。**二姐的话把风险**降级**了，没有**关闭**它。
+🔴 **与上文法条部分冲突，冲突本身要记，不要抹平。**两种可能：① 该栏因省份/电局界面版本而异；② 执行层面已弱化（新办套餐式服务）。**结论仍待和界鸿源（真实实体）登录电子税务局看备案报告界面确认。**二姐的话把风险**降级**了，没有**关闭**它。
 
 **归纳**：法条层面要交，实务层面不难交、也不会被卡。
 
