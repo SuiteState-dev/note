@@ -30,6 +30,11 @@ https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_ki
 项目进度状态
 https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_status.md
 
+
+## l10n_cn_assbe_chart_R33A.csv
+参考资料ASSBE科目表
+https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_assbe_chart_R33A.csv
+
 ## l10n_cn_asbe_chart_reference.csv
 ASBE企业准则科目表
 https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_asbe_chart_reference.csv
