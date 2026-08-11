@@ -1,5 +1,7 @@
 ## 0. 快速导航
 
+> **本档版本：2026-08-10 v10**（吸收 R33-T0 取数机制实测：§7 新增 **B-64**（两条取数路径分野——我方 BS/PL 四张纯 `account_codes` 按编码、官方通用报表按 `account_type`，冲突各不相让；`verified` live）。**两个改变判断的 nuance**：① 我方 CN 报表是官方 BS(id4) 的编码 variant、CN 公司默认看的就是它，非按型通用版；② CF 是唯一按类型（`asset_cash`）判现金的例外。⇒ **自发科目表时 `account_type` 只有货币资金类必须钉死，其余次要**，B-60 的类型恐慌收窄到只剩现金类。）
+> **v9**（吸收 l10n_cn R31 v20 源码定位轮 + R32 dev 库实测轮：§7 新增 **B-63**（多公司共享账户 + 本公司 code 缺失时 `account_codes` 引擎跨公司兜底 → 前缀吃入 → **静默错报**，`verified`）；**B-54/55/58/59 各补 v20 版本锚**（`sum_if_pos`/`sum_if_neg`/`count_rows` 在 v20 已删、`account.group` 已删、D/C 与前缀匹配保留、报表引擎方法全改名）；§8 新增 **惯例 15**（grep 前先确认工作树完整）、**惯例 16**（官方先例证明「当下认可」不证明「稳定」），**惯例 12 补第三变体**（渲染语言造成的假 0）；🔴 **B-54 前提订正**：`code` 非公司无关单值，按 root 公司存于 `code_store`）
 > **本档版本：2026-08-10 v8**（🔴 **B-60 收窄**：缺陷不是「编码体系错配」而是「在产品 vs 生产成本的 WIP 建模错配」——Odoo 的 ASBE 模板 `cn_large_bis` 与财政部 ASBE 码是对齐的；§7 新增 **B-62**（2017 后新增科目无权威码 + 前缀匹配的碰撞面大于逐码对照））
 > v7（§7 新增 **B-60**（`l10n_cn` chart 的 1406/4001 双轨 = 西式 WIP 模型与中国成本模型错配）、**B-61**（同事务新建 `account.account` 未 flush 引擎取不到）；**B-55 补第四条锚**（D/C 与 `sum_if_pos` 两套机制不可互推）；§8 新增**第 14 条**（弱证据组必须自带标签）。🔴 **编号事故留痕**：design draft-36 §17.4 曾把 R30-T2b 交付挂到 **B-59**，与本档 v6 已占用的 B-59（subformula 引擎归属）**撞号**；且 T2-b 的报表公式属中国口径、home 在项目档 §4.5.12，不入本档。T2-b **不占新号**，其跨项目部分并入 B-55 第四条锚）
 > v6（§7 新增 **B-53 ~ B-59**：lock date 留痕 / `account.account` 19.0 扁平+v20 版本锚 / `account_codes` D-C 三条边界 / `ir.sequence` 三键取号 / `account_type` 静默继承 / `sum_if_pos`-`-sum_if_neg` 符号分流 / subformula 引擎归属）
@@ -137,6 +139,13 @@ Nginx 反代配置保留，停用期间访问 erp.suitestate.com 返回 502 属�
 - **`comparison.filter` 选 `same_last_year` 还是 `previous_period`，年报等价、季报不同。**实测 Q2 2026 下 `previous_period` 取 Q1 2026（上一季度）、`same_last_year` 取 Q2 2025（上年同期）；期间为整年时两者都落上一会计年度。→ 凡「上期/去年同期」语义的场景统一注入 `same_last_year`，一条路径通吃，无需按期间类型分支。`date_scope` 那套（`to_beginning_of_period` / `to_beginning_of_fiscalyear` 等）**没有**「上一个等长期间」的枚举值，此类需求只能走 comparison，离线生成 label 的路子不成立。
 - **官方报表里「减：xxx」这类扣减行存的是负值**，所以合计关系是**加不是减**（实测：`减：累计折旧` 行为负 → `账面价值 = 原价 + 累计折旧`）。凡给官方报表做勾稽校验、二次聚合、导出映射，先造数确认每行的存储符号，别照人眼读到的「减」字写减法。同类：某些「其中：」明细行是**备注行、不计入上级合计**，聚合时要排除。
 
+🔴 **v20 锚（`observed`，`odoo/enterprise@d2368c8b6fe`，2026-08-10；本组随 20.0 发布须重核）**：
+- **line / column 由 dict 改为 `@dataclass(slots=True)` 对象**（`account_reports/utils/report_data_objects.py`，19.0 无此目录）；`column_group_key`(str) → `column_group_index`(int)，`options['column_groups']` 由 dict 改为**按整数下标访问的 list**。1-1 对齐**保留**，但 `line['columns']` / `column['no_format']` 这类**按 dict 读写的代码会直接抛异常**（引入 `odoo/enterprise@db5cef786049`，2026-05-22）。
+- **官方 XLSX 按钮的 `always_show` 由 `True` 翻为 `False`**（默认收进齿轮菜单），按钮名 `PDF` → `Print`；`always_show` **机制本身未变** ⇒ 我方按钮显式带 `always_show: True` 仍在主区。
+- `_init_options_buttons` / `dispatch_report_action` / `export_file` / `export_to_xlsx` / `xlsxwriter` / `root_report_id` / custom_handler 回落 —— **签名与语义均未变**。
+- 二进制字段赋值 `base64.b64encode(...)` → `BinaryBytes(...)`（全局改动，官方给了 `odoo/upgrade_code/19.3-00-base64-in-xml.py`）。
+- 报表引擎方法全部改名 + 掉 3 参、`sum_if_pos`/`sum_if_neg`/`count_rows` 删除，见 B-58 / B-59。
+
 ### 会计模型语义
 - `_reverse_moves`（红冲/反过账）= 先 `move.copy(default_values)`（`reversed_entry_id` 在 default 里）→ 再 `write({'line_ids': [Command.update(..., {'balance': -balance})]})` 翻符号。**两步**，不是一次性建好。
 - 因此：`store=True` + `readonly=False` 的 compute 字段 **`copy` 默认为 True、会带原值**，值被改掉是**后面那个 write 触发重算**导致的，不是 copy 丢值。要保留原值，守卫加在 `write()`/`_compute` 上判 `move_id.reversed_entry_id` 即可，无需行级匹配（Odoo **无 `reversed_line_id`**，行序不是承诺 API）。
@@ -188,6 +197,9 @@ Nginx 反代配置保留，停用期间访问 erp.suitestate.com 返回 502 属�
 - `account.account` **无** `parent_id` / `is_group` / `deprecated`，**扁平**；
 - **父科目可直接记账，无原生守卫** → 前缀汇总同时吃父与子，**父子混用即重复计数**；
 - `code` = `Char(64)`，同公司唯一强制，`.` 合法；
+  🔴 **但 `code` 不是公司无关的单值**（19.0 即如此，**非 v20 变更**，R31/R32 两侧亲核）：实际存储在 `code_store`（`company_dependent=True`），`code` 是其 `depends_context('company')` 的 compute/inverse 门面，**按 `env.company.root_id`（公司族）解析** —— 跨 root 才不同。另有 `account.code.mapping` 承载跨公司映射。源码 19.0 `addons/account/models/account_account.py:39-40/97/100/334-336`；master 同构。
+  🔴 **对前缀取数的直接后果**：`account_codes` 引擎取 code 时**带跨公司兜底** —— 当前公司/root 的 `code` 为空时，遍历 `account.company_ids` 取**其它公司的 code** 参与前缀匹配（19.0 `account_reports/models/account_report.py:4231-4242`，`verified`；master `:4688-4694`，同机制）。**详见 B-63。**
+  ⚠️ **note 侧订正**：若 `code = Char(64) 同公司唯一` 被读成「公司无关的单值」，前提就错了。销号 `status §8 第4项子问题③`——答案是「**从来就不是**」。
 - 删有分录的账户被挡；停用父不级联子；**无 parent FK，故 `account.group` 的 `ondelete='cascade'` 坑不适用**。
 
 **v20 补充（`observed`，未亲验）**：「父科目可记账」在 v20 是**官方明示的设计意图**（commit message），纯分组父级靠 `active=False` 表达 → 守卫应取「告警」而非「硬约束」，硬约束是在跟框架方向对着干。
@@ -195,6 +207,8 @@ Nginx 反代配置保留，停用期间访问 erp.suitestate.com 返回 502 属�
 ---
 
 **B-55 `account_codes` 的 `D`/`C` 方向后缀 —— 三条边界（19.0）**
+
+> 🟢 **v20 锚（`observed`，`odoo/enterprise@d2368c8b6fe`，2026-08-10）**：`D`/`C` 后缀**保留、语义等价**，仍按 `account_id` 整户余额判方向、`0` 仍归 D 侧（`account_report.py:4574-4582`；`GROUP BY account_id` 仍在 `:4632`）。前缀匹配（Python 侧 `bisect`+`startswith`，非 SQL LIKE）与正则**逐字符未变**。实现层一处改写：master 按 `account_id` 跨该公式所有 prefix_key 求和（19.0 按 `(prefix_key, account_id)` 分桶），倍数为正、不改符号，D/C 判定结果相同。🔴 **但第四条锚（下）在 v20 失去一半对象** —— `sum_if_pos` 侧已被官方删除，见 B-58。
 
 **能力（`verified`，源码 `account_reports/models/account_report.py:4211-4223 / 4272 / 4362-4370`）**：引擎**有** `D` / `C` 方向后缀（`2202C` = 该前缀下各账户净额为**贷**才计、否则 0；`2202D` 反之）。**推翻「`account_codes` 表达不了借贷方向」的绝对表述。**
 
@@ -233,6 +247,11 @@ Nginx 反代配置保留，停用期间访问 erp.suitestate.com 返回 502 属�
 
 **B-58 `domain` 引擎的 `sum_if_pos` / `-sum_if_neg` = 单一来源按符号分流、双侧正数列示（19.0）**
 
+> 🔴 **v20 锚（`observed`）：本条机制已被官方删除。** `sum_if_pos` / `sum_if_neg` / `count_rows` 三个 subformula 在 `odoo/enterprise@e7439ee932ab`（2026-07-14，`[IMP] account_reports: make domain engine snapshotable`）删除，官方原因 = 它们破坏 domain 引擎的可组合性（快照需要）。前后逐字核：`e7439ee932ab~1` 命中 18 / `e7439ee932ab` 命中 0。
+> **官方迁移范式**：拆两个表达式 —— 原表达式 `subformula` 改 `sum`，新增一个 `aggregation` 表达式挂 `if_above(CUR(0))` / `if_below(CUR(0))`，并把上游引用改指新 label。样板 = 同 commit 的 `l10n_vn_reports/data/balance_sheet.xml`（改 630 行）。
+> 🔴 **`0` 的归属反转，不可机械替换**：旧 `sum_if_pos` 判据 `>= 0`（**0 归正侧**），新 `if_above(CUR(0))` 判据 = **严格大于 0**。本条四夹具（尤其 F4「无余额 → 0/0」与边界为 0 的场景）迁移后须**逐条重判**。
+> ⚠️ **本条 19.0 结论仍成立**（`verified live`，四夹具全对），**保质期到 v20 为止**。见惯例 16。
+
 **语义（`observed`，源码）**：
 - `sum_if_pos` / `sum_if_neg` 判**整行聚合净额**（`total_sum`，`:4181`，注释明写**不可逐 `query_res` 判**）；
 - `-` 前缀经 `safe_eval` 处理（`:3510 / :3531`），把负净额**取正**；
@@ -263,6 +282,9 @@ R_prep: engine=domain  formula=[('account_id.code','=like','1122%')]  subformula
 ---
 
 **B-59 条件类 subformula 分挂两套引擎，`account_codes` 不能直接挂（19.0，`observed`）**
+
+> 🟢 **v20 锚（`observed`）**：`if_above` / `if_below` / `if_between` / `if_other_expr_above|below` / `round` / `ignore_zero_division` / `cross_report` **全部保留**（`aggregation` 侧）；`sum` / `-sum` 保留（`domain` 侧）；🔴 `sum_if_pos` / `sum_if_neg` / `count_rows` **删除**（见 B-58）。两处增量：① `cross_report` 新增可选第二参 `force_date_scope`，正则收紧为**报表 id 不得含逗号/空白**；② `aggregation` 在 groupby 时不施加 bound。
+> 🔴 **引擎方法全部改名**：`_compute_formula_batch_with_engine_<x>` → **`_report_engine_<x>`**，并**去掉 `next_groupby` / `offset` / `limit` 三参**（`odoo/enterprise@839c055caf11`，2026-05-07）。引擎的**技术标识符** `'account_codes'` / `'domain'` 等**未变** ⇒ 纯声明式表达式不受影响，**只有 override 过引擎方法的代码会碎**。
 
 源码 `account_reports/models/account_report.py`：
 
@@ -354,6 +376,63 @@ R_prep: engine=domain  formula=[('account_id.code','=like','1122%')]  subformula
 
 **但也不要过度反应**：2006 体系的老码（1001–1602 / 2201–2241 / 4·5·6xxx 大类）四方一致，前缀匹配够用。**要分开处置的只有这一小撮。**
 
+**B-63 多公司共享账户 + 本公司 code 缺失 → `account_codes` 引擎跨公司兜底 → 前缀吃入 → 静默错报（19.0，`verified` dev 库）**
+
+**机制（`observed` 源码，19.0 亲核）**：`account_codes` 引擎在遍历账户取 code 时，若**当前公司/root 的 `code` 为空**，会遍历 `account.company_ids` 取**其它公司的 code** 参与前缀匹配。
+`account_reports/models/account_report.py:4231-4242`（`_compute_formula_batch_with_engine_account_codes` 内）：
+```
+4231 for account in all_accounts:
+4232     account_code = account.code
+4233     if not account_code:                 # ← 仅当本公司/root code 空才触发
+4234         for company in account.company_ids:
+4235             account_code = account.with_company(company).code
+4236             if account_code: break
+```
+
+**这个危险状态普通 ORM 造不出来（`verified`，R32-T1-0-d）**：`account.account.create` **无条件**调 `_ensure_code_is_unique`，要求账户所属**每家公司都有 code**，否则 `ValidationError`；只有 `write` 认 `defer_account_code_checks=True` 才放行。实测：`create(company_ids=[A,B], 只给 A code)` → 报错；A 单公司带码 create + defer-write 把 B 加进 `company_ids` 且不给码 → 成功且持久。**⇒ 该状态仅经导入 / 建表模板 / load（defer 路径）产生。**
+
+**四夹具实测（`verified`，dev 库两家 CN 公司，全 rollback）**：
+
+| 夹具 | 造数 | 实测 | 判定 |
+|---|---|---|---|
+| F1 基线 | 单公司 A，code `1122.001`，Dr 7777 | 落应收账款及各级合计 | ✅ **预期结果非证据**（惯例 14） |
+| **F3 🔴唯一证据组** | 账户 A code=`1122.001`；defer 把 B 加入 `company_ids` 且 **B 侧留空 code**；在 **B** 上 Dr 8888 | 引擎 `source=fallback:comp4`、`resolved_code=1122.001`；8888 落进 B 报表的**应收账款（1122 前缀）** | ✅ **被吃到** |
+| **F4 勾稽面** | F3 命中下跑 `_CN_CROSSFOOT` | `breaks=[]`；资产总计 `[8888,0]` = 负债权益总计 `[8888,0]` | 🔴 **静默** |
+| F5 双列 | F3 场景开双列 | 应收账款 `[8888, 0]`，仅期末列受影响 | ✅ 逐列独立 |
+| F2 无泄漏对照 | A code=`1122.001` / B code=`2202.001`，各有余额 | on A `source=own` 落应收；on B `source=own` 落应付 | ✅ 两公司都有码 → 各用自身码，兜底门控 `if not account_code` 挡住 |
+
+🔴 **F4 静默的机理**：被错放的账户**同时**进入 ① 它错落的明细行（1122 前缀）② 「流动资产合计」子表（同为 1122 前缀 Σ），**同源同吸 → 子表恒等式不破**；且双分录对手方带码正常入表 → 资产=负债权益也守恒。**两个守恒同时成立，所以守卫看不见。** 属「静默错报」，**严重度与 `4001`（B-60）同级**。
+
+🔴 **跨项目适用面**：任何按 `account_codes` 前缀取数的报表都受此约束，不限于 l10n_cn。**判据**：客户账套是否会经**导入路径**产生「跨公司共享 + 本公司缺码」的账户 —— 若会，静默错报真实存在。处置见 `status §8 第 10 项`（Safi 拍）。
+
+⚠️ **与 B-54 对读**：本条是 B-54「`code` 按 root 公司多值」那一前提的**实测后果**。B-54 讲事实，本条讲这个事实怎么变成一个抓不到的错报。
+
+
+**B-64 两条取数路径分野：`account_codes`(编码) vs `account_type`(类型)，冲突时各不相让（19.0，`verified` dev 库）**
+
+**同一笔「编码与类型冲突」的分录，在两类报表里落到完全不同的地方，两边都不看对方那个维度。**
+
+| 路径 | 报表 | 取数依据 | 源码 |
+|---|---|---|---|
+| **A** | 我方 CN BS/PL 四张 form | 🟢 **纯按编码前缀** | `account_codes` 引擎选账户只靠 `code.startswith(prefix)`+`tag_ids`、**全函数无 `account_type`**（`observed` `account_report.py:4283/4318-4342`）；`suite_cn_statement/models/` 取数与勾稽 grep `account_type` **零命中**（T0-5） |
+| **B** | 官方**通用** BS/PL | 🔴 **按 `account_type`** | 每条 `domain` 公式按 `account_id.account_type` 归类（Receivables=asset_receivable、Revenue=income…，`observed` T0-0-c） |
+
+**Live 铁证（`verified`，dev 库 company 4 ASSBE，全 rollback）**：
+- `code=1122999`（应收号段）+ `account_type=expense` Dr 8888 → 我方 ASSBE BS 落**应收账款**（按码）；官方通用 BS 落**未分配利润 −8888** / 官方通用 P&L 落 **Less Operating Expenses**（按型）。
+- 对称 `code=6999`（损益段）+ `account_type=asset_current` Dr 7777 → 我方 BS **资产行取不到**（可见漏）；官方通用 BS 落 **Current Assets**（按型）。
+
+🔴 **⇒ 客户改错 `account_type`：我方中式报表不受影响（按码），官方通用报表会错（按型）。这是 B-60（`4001`）的一般化** —— `4001` 只是「编码对·类型错」这个普遍分野的一个实例。
+
+🔴 **两个关键 nuance（改变了此前的判断）**：
+1. **我方 CN 报表本身就是 Odoo 官方通用 BS(id4) 的 `variant`（27/28）** —— CN 公司上打开「官方 Balance Sheet」**默认渲染的就是这个 `account_codes` 的 CN 变体**，不是按类型的通用版；只有强制切 `selected_variant_id=通用id` 才走 `account_type`。⇒ **「客户会打开按型的官方报表因此 account_type 必须建对」这个前提要重估** —— CN 公司的会计默认看到的就是按编码的我方版。
+2. **现金流量表是唯一例外** —— `suite_cn_cashflow` 走 `domain` 引擎，**用 `account_type='asset_cash'` 判「哪笔分录触及现金」**（现金流定义只能按货币资金类型认、编码不固定，`observed`）。⇒ **「我方 form 纯按编码」这个断言限 BS/PL 四张成立，CF 不成立**。货币资金类科目（1001/1002/1012）的 `account_type` **必须** typed `asset_cash`，否则 CF 判不出现金。
+
+**TB/GL 按编码分组**（T0-4）：`1122999`（type=expense）在 TB 里落「1 资产类」段紧跟 1122，GL 按 code 排 ⇒ 类型建错的科目在日常 TB/GL 上**混在应收区、更隐蔽**。
+
+🔴 **对自发科目表的直接含义（跨项目）**：既然我方 BS/PL 按编码、且 CN 公司默认看的就是我方版，则自发科目表时 **`account_type` 只有货币资金类必须钉死（=asset_cash，为 CF）**，其余科目类型建错不影响我方报表。**编码号段才是取数键，必须对；类型除现金外是次要的。** 这把 B-60 那种「类型建错=静默错报」的恐慌**收窄到只剩现金类**。
+
+⚠️ **与 B-60 对读**：B-60 说「4001 类型错致在产品静默进损益」—— 那是**官方通用报表/`account_type` 路径**下的现象；在我方按编码的 CN 报表里，只要 `4001` 编码落在成本号段、报表按 `4001` 前缀取，就对。两条一起读才不误判。
+
 ---
 
 ## 8. 交付验收惯例（跨项目）
@@ -381,6 +460,7 @@ R_prep: engine=domain  formula=[('account_id.code','=like','1122%')]  subformula
    依据：R27-T2-B 在 dev 库的 `CN ASSBE Company`（chart 未装、0 账户）上查 `account.group`，得 0，误报「本库 0 组」；实际装了 chart 的是同库另一家 CN 公司。
    这是惯例 2「单公司通过 ≠ 多公司通过」的同族：**惯例 2 管"通过"，本条管"没有"。**任何以"某某为 0 / 不存在"为前提的结论，先回答「我查的是哪个主体、过滤条件是什么」。
    **配套**：还要回答「**我查的这个库是什么性质**」—— demo/测试数据上得出的结论，不能用来推真实客户的行为。R27 曾据 dev demo 库的科目表推出"客户不建二级科目"，无效。
+   🆕 **第三变体（渲染语言造成的假 0，R32）**：报表行名会**按 UI 语言渲染**。dev 库 UI = en_US 时，按中文名「应收账款」过滤命中 ∅，是**语言假象不是没取到**。R32 全程改按**金额锚定**（carriers）定位命中。⇒ 惯例 12 现有三个变体：**查错载体**（R27，本条正文）、**载体没 flush**（B-61）、**渲染语言假 0**（R32）。三条同族，"命中 0"之前都要先答一句「我这个 0 是真的没有，还是查错了 / 没落库 / 语言渲染成了别的字」。
 13. **实测得出的事实必须落主题索引，不能只落变更流水。**按时间追加的变更记录（design changelog、commit message、轮次回写）是**流水账不是索引**：下个窗口按主题找不到，只能重推一遍。
    规矩：任何"某系统实际怎么表现"的实测结论，除了写进本轮回写，**必须同时落到一个按主题组织的位置**（本档 §7 的 B-xx，或项目档的对应节）。
    依据：l10n_cn R17-C 组的合规机制实测，三个窗口后被 R27 完整重做。代价不只是重复劳动——**旧结论中那条不完整的表述在这三个窗口里一直被当成已结案引用。**
@@ -388,6 +468,14 @@ R_prep: engine=domain  formula=[('account_id.code','=like','1122%')]  subformula
    规矩：回报中把弱证据组**显式标成「预期结果，非证据」**，并指明**唯一构成证据的那一组**是哪个。
    依据：R30-T2b。dev 库无子账户（`2202C = 净额`、`2202D = 0`），明细级 D/C 改动后逐格值**与改前完全相同**，回归双跑必然零差异；唯一能证明正确性的是**有子账户夹具**（`2202.01 贷500 / 2202.02 借100`）。若不标注，下个窗口看到「双跑全绿」四个字就会认为改动已被验证。
    这是惯例 6「值算 0 会掩盖结构问题」的**回报文本侧**：惯例 6 管**怎么测**，本条管**怎么写测出来的东西**。
+15. **grep 之前先确认工作树是完整的。** sparse-checkout / shallow clone / worktree 会把「全树 grep」悄悄变成「部分目录 grep」，而**命中 0 的输出与"确实不存在"长得一模一样**。
+   **判据**：任何形如「全树命中 0」的结论，先答一句「**我这棵树是完整的吗**」——`git sparse-checkout list`、`git rev-parse --is-shallow-repository`、顶层目录数 vs `git ls-tree` 项数。
+   依据：R31。社区 master 工作树启用了 sparse-checkout（仅 7 个目录），两次"全树 grep"（`account.group`、`code_path`）实际只覆盖了这 7 个目录；执行方自查发现后展开全树重做。**该失误由执行方自陈，判据因此被证明可执行。**
+   归族：与惯例 12「查到 0 ≠ 真为 0」、B-61「未 flush 引擎取不到」同族——惯例 12 管**查错了载体**、B-61 管**载体没落库**、本条管**载体被截断**。引用时一起读。
+16. **「官方先例」证明的是"这个写法当下是官方认可的"，不证明"这个写法稳定"。**
+   先例能挡住「我们是不是用错了」，挡不住「它会不会被删」。凡以"某官方本地化模块也这么写"作为设计依据的，**必须同时记下先例的版本锚**，并在版本迁移时**把先例本身也当成待核对象**。
+   依据：B-58 当初以越南 TT200（`l10n_vn_reports`）为官方先例给 `sum_if_pos` / `-sum_if_neg` 背书；官方在 `odoo/enterprise@e7439ee932ab` 删除该机制时，**在同一个 commit 里把越南那份也改了 630 行**。
+   归族：与项目档 §9.1「结论有保质期」同源，只是对象从**我方结论**换成了**他方先例**。
 
 ---
 
