@@ -9,6 +9,10 @@ SuiteState 定位、已发布/内部模块清单、Apps Store 发布规则、Wha
 Odoo 19 技术约束踩坑合集。
 https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/background.md
 
+## vps_odoo_ops.md
+VPS配置信息
+https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/vps_odoo_ops.md
+
 
 ## odoo19_accounting_mechanics.md
 odoo19实测笔记：估值架构基线，总账与库存分裂，成本法与按 Lot 估值，Landed Cost，绕开采购—销售链的估值事件，报表与毛利，期末关账等.
@@ -29,7 +33,7 @@ https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_ki
 https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_status.md
 
 ## legal%20documents
-法规原文14个文件(截止2026年8月10日收录)
+l10n_cn参考文件法规原文14个(截止2026年8月10日收录)
 https://github.com/SuiteState-dev/note/tree/main/legal%20documents
 
 ## l10n_cn_assbe_chart_R33A.csv
