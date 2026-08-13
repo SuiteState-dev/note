@@ -28,7 +28,7 @@ https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_ki
 项目进度状态
 https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_status.md
 
-## legal documents
+## legal%20documents
 法规原文14个文件(截止2026年8月10日收录)
 https://github.com/SuiteState-dev/note/tree/main/legal%20documents
 
