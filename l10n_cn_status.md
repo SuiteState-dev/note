@@ -1,6 +1,6 @@
 # l10n_cn 项目状态档
 
-**版本**：s-20（2026-08-16 **R46 空绿排查结单**：全量 77 用例逐条打桩、空绿 **4 条**、修后复验 **0**、全量重跑 0 failed；两条历史结论降级入 `项目档 §6.7`；**§3 整节重写**（旧节累积已交付未销号项）；T3-5 订正为**已做且导入通过**。前记 s-19（2026-08-15 **R45 三件全绿结单**：连号检测判据收窄（`coa` **3.0.1**）、十三项披露删结果预测（`statement` **1.20.0**）、行名核修 + 两处新分歧由财政部原文裁定；`4401` `unknown` 销号；🔴 顺带挖出 `TestCoaPublish` **8 条空绿** ⇒ 立惯例 30。前记 s-18（2026-08-15 **R44 结单**：T2 双载体全绿结案（`suite_cn_statement` 1.19.0）、T1 交接待跑（卡平台侧 build）、T3 撤下。前记 s-17（2026-08-14 R44-T2 交付、T1 卡等平台侧 build。前记 s-16（2026-08-14 R44-T2 口径订正：前缀直取 8 条、口径声明≠告警、载体改报表尾部披露行。前记 s-15（2026-08-14 增量更新：三份新准则修订通知入库，ASBE 未执行版 form **判定不做**，`5401`/`5402` 的 `unknown` 销号。前记 s-14（2026-08-14 整体更新，吸收 **R43 骨架修正轮全绿交付**：编码统一点分 3.0.0、缺陷 #7 消除、三件口径落地、凭证呈现骨架、6 条地方税种默认归档）
+**版本**：s-21（2026-08-16 **§10 v20 迁移面按新锚点重写**：VPS 侧 Q-43~Q-50 定向查探回报（`A-88`~`A-96`）到位 —— 地基三条确认未塌（`account_codes` 引擎语义全保留、`l10n_cn_asbe_bs` xmlid 原地未动、`account.report.line` 无新增必填），伤面集中到**科目挂载层**；新增 M-12 ~ M-16，收窄 M-3。前记 s-20（2026-08-16 **R46 空绿排查结单**：全量 77 用例逐条打桩、空绿 **4 条**、修后复验 **0**、全量重跑 0 failed；两条历史结论降级入 `项目档 §6.7`；**§3 整节重写**（旧节累积已交付未销号项）；T3-5 订正为**已做且导入通过**。前记 s-19（2026-08-15 **R45 三件全绿结单**：连号检测判据收窄（`coa` **3.0.1**）、十三项披露删结果预测（`statement` **1.20.0**）、行名核修 + 两处新分歧由财政部原文裁定；`4401` `unknown` 销号；🔴 顺带挖出 `TestCoaPublish` **8 条空绿** ⇒ 立惯例 30。前记 s-18（2026-08-15 **R44 结单**：T2 双载体全绿结案（`suite_cn_statement` 1.19.0）、T1 交接待跑（卡平台侧 build）、T3 撤下。前记 s-17（2026-08-14 R44-T2 交付、T1 卡等平台侧 build。前记 s-16（2026-08-14 R44-T2 口径订正：前缀直取 8 条、口径声明≠告警、载体改报表尾部披露行。前记 s-15（2026-08-14 增量更新：三份新准则修订通知入库，ASBE 未执行版 form **判定不做**，`5401`/`5402` 的 `unknown` 销号。前记 s-14（2026-08-14 整体更新，吸收 **R43 骨架修正轮全绿交付**：编码统一点分 3.0.0、缺陷 #7 消除、三件口径落地、凭证呈现骨架、6 条地方税种默认归档）
 **配套**：`项目档 v36` / `design draft-45` / `background v23`
 **仓库**：note
 **职责**：**当前状态**。已交付 / 冻结中 / 开工候选 / 收尾未清 / 材料缺口 / 开放项 / v20 迁移面。
@@ -362,14 +362,15 @@
 
 ## 10. v20 迁移面（**清单，不排期，不开工**）
 
-> **锚**：`odoo/odoo@a0b6c0a376cc` / `odoo/enterprise@d2368c8b6fe`（2026-08-10）。**全部 `observed`。**
-> **口径**：20.0 未发版、`20.0` 分支尚未切出，master 距上次调研已漂移 797 / 493 个提交。**每条都要在 20.0 发布后重核，现在不得据此改任何代码。**
+> **锚（s-21 更新）**：`odoo/odoo@af5442cef5c4` / `odoo/enterprise@059764e93470`（**2026-08-15**）。前锚 `a0b6c0a376cc` / `d2368c8b6fe`（2026-08-10），五天漂移 299 / 212 个提交，其中触及 `l10n_cn` 2 个、`l10n_cn_reports` **0** 个。**全部 `observed`，无 `verified`。**
+> **口径**：20.0 未发版、`20.0` 分支尚未切出。**每条都要在 20.0 发布后重核，现在不得据此改任何代码。**
+> 🔴 **本节只登记「我方哪些交付件会被砸到」，不登记 Odoo 事实本身** —— 事实在 VPS 侧分册（`odoo20_change_directions.md` 及 `A-` / `G-` / `V-` / `P-` / `AI-` 各册），本节只存指针。**避免两处各记各的，同惯例 13。**
 
 | # | 打到什么 | 严重度 | 有无迁移路径 |
 |---|---|---|---|
 | **M-1** | **`account.group` 模型已删除**、53 个 `account.group-*.csv` 全删、无兼容层 | **致命** | 改挂 `account.account.parent_id`；纯分组节点用 `active=False`。🔴 官方脚本 `COA_TO_MIGRATE` **不含 `cn`** ⇒ **我们的树是自己建的，迁移得自己写**。🟢 R33-A 已把冲击面减半（定位改「科目表发行方」、不碰分级树）；但发行侧新增一笔债 = §8 第 11 项 |
 | **M-2** | **ASSBE 往来四行的 8 个表达式全部报错**（`sum_if_pos` / `-sum_if_neg` 已删），且 `0` 值语义反转 | **高** | 官方范式 = 拆两个表达式 + `aggregation` + `if_above(CNY(0))`。**0 值边界逐条人工判定，不可机械替换** |
-| **M-3** | **中式竖式 XLSX 取数逻辑失效** —— line/column 改 dataclass、`column_group_key`(str) → `column_group_index`(int) | **高** | 无官方脚本，人工改写全部 dict 式访问 |
+| **M-3** | ~~中式竖式 XLSX **取数逻辑**失效~~ 🟢 **s-21 收窄**：**取数路径未变**（`_get_lines` 仍是导出取数入口，A-93-a；数据对象层只改「行被渲染成什么」dict→dataclass，未改「行从哪来」，A-91-c）。真实失效面 = **消费侧的属性访问写法**：`column_group_key`(str) → `column_group_index`(int)、dict 下标 → dataclass 属性 | ~~高~~ **中高** | 无官方脚本，人工改写全部 dict 式访问。**范围比原判小一圈：改的是读法，不是取数** |
 | **M-4** | 凡 override 过 `_compute_formula_batch_with_engine_*` 的代码失效（改名 + 掉 3 参） | **高** | 机械改名 + 签名裁剪；用到 `offset`/`limit`/`next_groupby` 的需重设计 |
 | **M-5** | **全部 `suite_*` 模块的 `security/ir.model.access.csv` 失效**（`ir.model.access` / `ir.rule` 双双删除，无兼容层） | **高** | 有：`odoo/upgrade_code/19.4-00-ir-access.py`。🔴 **与 l10n_cn 线无关、影响 12 个已发布模块 + 5 个内部模块，应单独立项** |
 | **M-6** | `suite_cn_coa` 差异表要重算（官方 CN CoA 层级化 + 增删科目） | 中高 | 无脚本，人工对齐。🟢 R33-A 后基线已有：`l10n_cn_assbe_chart_R33A.csv` 101 行 + 19.0 逐码 diff（同码同义 29 / 同码异义 1 / 官方独有 5 / 我方独有 38），按同一四分类跑一遍即可 |
@@ -378,9 +379,33 @@
 | **M-9** | `account.report.expression` 字段变化（`formula`/`subformula` Char→Text、engine 新增 `text`/`reference`） | 低 | 向后兼容 |
 | **M-10** | 官方 XLSX 按钮 `always_show` 默认翻转 | 低 | 我方显式带 `always_show: True` 即可 |
 | 🆕 **M-11** | **脱钩工程 + id4/28 可达性处置** —— 🔴 **不是 v20 打进来的**，是**主动排期到此轮**以复用 M-2/M-3/M-4 的取数层重写。列此仅为排期归位，勿按「v20 破坏面」读 | —— | 度量与做法见 §8 第 8 项 |
+| 🆕 **M-12** | **`property_*` 配置整批迁到 `res.company` 模板并改名** —— 收款 / 付款 / 存货计价 / 生产成本四键去 `property_` 前缀（`property_account_receivable_id` → `receivable_account_id` 等）；`use_storno_accounting` 与两个 `property_account_*_categ_id` 从 `template_data` 消失。**我方若在 chart template 层写过这些键，v20 上静默失效**（不报错、只是不生效） | **高** | 无脚本。机械改名 + 换层级，但**须逐键确认新归属**。⚠️ 官方提交名含 `l10n_*`，属跨全部本地化的横扫改动，不是 CN 专有。出处：VPS `A-90(a)` |
+| 🆕 **M-13** | **CN 在产品 / 制造费用科目改挂**：`account_production_wip_account_id` 从 `14xx`（存货段）改挂 `4001`/`5001`（成本段），overhead 键改挂 `4101`/`5101`（`cn` 与 `cn_large_bis` 各两键） | **高** | 无脚本。🔴 **这是 M-7「存货 / 成本口径公式改动」的成因，不是两件事** —— 官方把 BS 存货公式加了 `+ 5001 + 5101 + 5201`、PL 排除项由 `5\(53)` 改成 `5\(5001, 5101, 5201, 53)`，正是为了把挪到成本段的在产品拉回来。**差异表重算必须先接受「在产品挂 4001/5001」这个前提，否则两边永远对不上。** 出处：VPS `A-90(b)` |
+| 🆕 **M-14** | 🔴 **`1012` 段两个明细子科目被删除** —— master 的 `cn` 表上无 `1012.01`/`1012.02`，职能改挂新增的 `1004`/`1005`（`transfer_account_code_prefix` 由 `1012` 改为 `1005`、suspense 改 `1004`） | **中高** | 无脚本，人工对齐。🔴 **连带**：R43 对 `1012 其他货币资金` 的裁定（「采纳时告警、不自动改 `account_type`」）**前提是官方保留 `1012` 明细** —— 该前提在 v20 不成立，**这条裁定到 v20 要重做**，见 `项目档 §4.5` 相关条。出处：VPS `A-90(c)` / `A-96(c)` |
+| 🆕 **M-15** | **两张中式资产负债表会继承 `enable_snapshots=True`** —— `l10n_cn_asbe_bs` / `l10n_cn_assbe_bs` 的 root 是 `balance_sheet`（全仓唯一显式开快照的报表），而 `l10n_cn_reports` 未显式覆盖 ⇒ 按 `_compute_report_option_filter` 的 root 继承规则会跟着开。两张利润表 root 为 `profit_and_loss`，不开 | **中** | 🟢 有覆盖办法：CN 报表 XML 上显式 `<field name="enable_snapshots" eval="False"/>`。<br>⚠️ **这是读继承规则推出的，非直读赋值** —— VPS 侧已显式标为推断并转实测项 **Q-51**（`precompute+store` 的 compute 字段最终落库值须装库读表确认）。**不得当作既成事实处理。**<br>🟢 **三条已排除**：我方无表达式披露行不进快照（不触发引擎）、我方改过表达式会因 `serialized_formulas_dict` 变化而重算（拿不到陈旧值）、引擎版本升级自动清快照。出处：VPS `A-91(d)` |
+| 🆕 **M-16** | **`ir.sequence` 两条改动**：① 日期区间子序列基准由 `fields.Date.today()`（服务器 UTC）改为 `context_today()`（用户时区）⇒ **跨日边界会落到不同的 `date_range` 子序列**，对「按期间分段取号」的中式凭证字号有实际影响；② 前缀 / 后缀含非 ASCII 触发 `@api.onchange` 告警（官方理由：Code128 条码只支持 ASCII）—— 中文字号「记 / 收 / 付 / 转」正中 | **①中 / ②低** | ① 无脚本，须确认我方取号是否依赖 UTC 日界。<br>② 🔴 **不动** —— 它是 onchange warning，**不阻断写入、不影响 XML/ORM 建记录**，只在 UI 编辑时提示。为消除告警改用 ASCII 前缀与中式字号习惯冲突，不值得。实测确认转 **Q-53**。出处：VPS `A-94(c)` |
 
-**本轮已排除、明确不构成风险的**：D/C 方向后缀、前缀匹配语义与正则、`date_scope` 枚举、条件类 subformula 白名单、comparison 多 column_group 机制、`_init_options_buttons` / `dispatch_report_action` / `export_file` / `export_to_xlsx` / `root_report_id` / custom_handler 回落、`account_voucher_cn`、B-57 的 code 邻近继承。
+**已排除、明确不构成风险的**：D/C 方向后缀、前缀匹配语义与正则、`date_scope` 枚举、条件类 subformula 白名单、comparison 多 column_group 机制、`_init_options_buttons` / `dispatch_report_action` / `export_file` / `export_to_xlsx` / `root_report_id` / custom_handler 回落、`account_voucher_cn`、B-57 的 code 邻近继承。
+
+🆕 **s-21 新增排除（VPS `A-88`~`A-96`，这几条是「地基没塌」的具体内容）**：
+
+| 排除项 | 出处 | 对我方的意义 |
+|---|---|---|
+| `account_codes` 引擎语义**全线保留**；删的是 `domain` 引擎的三个 subformula | `A-88` | 我方 192 条表达式的引擎地基在 |
+| 🔴 前缀匹配**仍且只能基于 `code`** —— `code_path` 在企业版 master 全树 `.py` 命中 **0**、社区侧仅 3 处定义/SQL 生成、业务侧零消费 | `A-88` | 「按 code 前缀取数」这个前提没被层级化取代 |
+| `l10n_cn_reports` 模块与 **`l10n_cn_asbe_bs` xmlid 原地保留**；三个 `chart_template` 键（`cn` / `cn_common` / `cn_large_bis`）无更名无合并 | `A-89` | **我方披露行与 `bal_begin` 列的 FK 挂载安全**（B-77 说的「唯一耦合」这次没断） |
+| `account.report.line` **无新增必填字段**；`report_id` / `hierarchy_level` / `sequence` 逐字未变。唯一变化 `foldable`(Bool) → `foldability`(Selection)，有官方脚本 | `A-91(b)` | **我方那条 `sequence=9000` 无表达式披露行，v20 上建得出来** |
+| 数据对象层**没有绕过** `account.report.line` —— `_get_lines()` 仍 `for line in self.line_ids` | `A-91(c)` | **外挂行仍会出现在输出里**（这是 M-3 得以收窄的依据） |
+| `account_type` **19 个取值零增删**，`asset_cash` 仍在；`parent_id` **非必填**；`name` 翻译 JSON 形态逐字未变 | `A-92` | 纯 ORM 新建科目路径不受影响；现金流量口径判据未变 |
+| 导出取数仍走 `_get_lines`；报表 **默认不走 Paper Muncher** | `A-93` | 中式版式导出这条路的入口没换 |
+| `account.move._order` / `sequence.mixin` / `_sequence_index` / 五个 regex **逐字未变**；`review_state` 在 `_post()` 内**零命中**（不改过账与编号时点） | `A-94` | 凭证编号机制整体未变 |
+| 三个 module hook 签名与 `-u` 重跑约束**全部未变**；`_register` 保留属性两分支各 8 处未变 | `G-95` | B-67 那条架构约束在 v20 仍成立 |
+| 现金流量表 handler 机制与 `asset_cash` 判据未变 | `A-96` | —— |
+
+⚠️ **一条口径订正（s-21）**：VPS 分册 `A-50` 表内「`account_report.py` 5,045」是 **`git diff --stat` 的改动行数、不是文件规模**（判据：同表 `account_partner_ledger.py` 记 1,200，而该文件 master 总行数仅 534 —— 总行数不可能小于自身）。新锚点精确值：**改动 `+2,731 / −2,406 = 5,137` 行，文件 `8,163 → 8,488` 行**，改动占比按插入侧 ≈ 32%、按增删合计 ≈ 60%（后者会把「一行被改」重复计成一增一删）。**引擎本体被大改这个结论不变，反而更重。**
 
 **阻塞**：DB 级迁移脚本在闭源 `odoo/upgrade#9357`，`unknown`。
+
+**转出的待实测项**（VPS 侧登记为 Q-51 ~ Q-53，均须等 20.0 可用）：① 两张中式 BS 的 `enable_snapshots` 实际落库值（M-15）；② 快照存在时我方外挂披露行在锁定期报表上的呈现；③ `ir.sequence` 中文前缀告警的实际 UI 呈现与是否影响保存（M-16②）。
 
 **重启条件**：20.0 正式发布 / master 版本号跳到 20.1 / 2026-09-24~26 Odoo Experience 之后 / 业务侧出现具体触发（某 `suite_*` 要提前适配、或客户提出升级时间表）。
