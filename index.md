@@ -45,10 +45,22 @@ https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/vps_odoo_o
 | 文件 | 是什么 | 类型 | raw |
 |---|---|---|---|
 | `l10n_cn_assbe_chart_R33A.csv` | **我方 ASSBE 科目表发行件**（R33-A 基线） | 🟢 CSV | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_assbe_chart_R33A.csv |
-| `l10n_cn_asbe_chart_reference.csv` | ASBE 企业准则科目表（参考） | 🟢 CSV | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_asbe_chart_reference.csv |
+| `l10n_cn_asbe_chart_reference.csv` | 🔴 **ASBE 侧的借鉴源 = 金蝶星云（大企业）科目表**，15 列 / 260 条。🟢 **2026-08-15 已核**：与星云原件 xlsx 去重后**编码集双向零差（260/260）** ⇒ **原件不入库**，本 csv 即引用源；原件多出的 42 列属模型层，已由 `金蝶材料档 §2.3/§2.4` 逐属性提炼 | 🟢 CSV | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_asbe_chart_reference.csv |
+| 🆕 **`l10n_cn_kingdee_assbe_chart_xingchen.csv`** | 🔴 **ASSBE 侧的借鉴源 = 金蝶星辰（小企业 / 小准则 2013）科目表**，20 列 + `洗件判定` 列 / **266 条（保留 247，其中一级 68；剔除 19）**。**全连号无点**（码长 4-7-10 = 4-3-3 分级）。⚠️ 该账套被人试建过 ⇒ 按 `洗件判定` 列筛「保留」即洗件，剔除行留在文件里可复核回退。⚠️ **星辰无 `系统预置` 列**，剔除是**人工判定 `observed`**、非字段判定。🔵 68 一级与我方 R33-A 的 68 一级**数字相同但未逐码比对，不得当结论**（同族：`background v18` 88 撞号） | 🟢 CSV | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_kingdee_assbe_chart_xingchen.csv |
 | `l10n_cn_assbe_chart_R33A旧版.csv` | R33-A 之前的旧版，**仅供追溯，勿作依据** | 🟢 CSV | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_assbe_chart_R33A%E6%97%A7%E7%89%88.csv |
 | `odoo+suite小企业科目 (account.account).xlsx` | **小企业库全量科目导出 181 条**（R43 证据件，含二姐归档的 49 条） | 🟡 XLSX | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/odoo%2Bsuite%E5%B0%8F%E4%BC%81%E4%B8%9A%E7%A7%91%E7%9B%AE%20%28account.account%29.xlsx |
 | `odoo+suite大企业科目 (account.account).xlsx` | **大企业库全量科目导出 333 条**（R43 证据件）。🔴 该库当时**推了代码但未 upgrade**，跑的是旧代码 —— 属历史件，见 `background §7 B-76` | 🟡 XLSX | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/odoo%2Bsuite%E5%A4%A7%E4%BC%81%E4%B8%9A%E7%A7%91%E7%9B%AE%20%28account.account%29.xlsx |
+
+### 🆕 电子税务局报送表样（ASSBE，2026-08-15 入库，**根目录**）
+
+🔴 **这是「表样件」不是「法规原文」，故不入 `legal documents/`。** 权威性在**行名 / 行次 / 列口径**（一手、税局导出），**不得引作准则依据** —— 准则依据取财政部文号文件（§9.8 材料铁律的分层）。
+🔵 **开发分支另有同一副本作测试夹具**（`suite_cn_statement/tests/fixtures/`）。**以夹具副本为源**；税局改版时**先改夹具、再同步本副本与转录**。
+
+| 文件 | 是什么 | 类型 | raw |
+|---|---|---|---|
+| 🟢 **`财务报表报送与信息采集_小企业会计准则_转录.md`** | 🔴 **优先读这份。** 两册 6 张表（BS / 利润表 / 现金流量表）全文行名与行次，另含 **两册列口径对照**（年报＝本年累计 + 上年；月季报＝本期 + 本年累计，**不可互套**）与 **税局模板自带错别字一条**（BS 行次 24，年报「生产性生物资产」/ 月季报「生物性生物资产」，处置未定）。`verified(artifact)` | 🟢 MD | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/%E8%B4%A2%E5%8A%A1%E6%8A%A5%E8%A1%A8%E6%8A%A5%E9%80%81%E4%B8%8E%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E5%B0%8F%E4%BC%81%E4%B8%9A%E4%BC%9A%E8%AE%A1%E5%87%86%E5%88%99_%E8%BD%AC%E5%BD%95.md |
+| `财务报表报送与信息采集_小企业会计准则_年报.xls` | 原件（3 sheet，含合并单元格与双栏布局）。**与转录冲突时以原件为准** | 🟡 XLS | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/%E8%B4%A2%E5%8A%A1%E6%8A%A5%E8%A1%A8%E6%8A%A5%E9%80%81%E4%B8%8E%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E5%B0%8F%E4%BC%81%E4%B8%9A%E4%BC%9A%E8%AE%A1%E5%87%86%E5%88%99_%E5%B9%B4%E6%8A%A5.xls |
+| `财务报表报送与信息采集_小企业会计准则_月季报.xls` | 原件（3 sheet） | 🟡 XLS | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/%E8%B4%A2%E5%8A%A1%E6%8A%A5%E8%A1%A8%E6%8A%A5%E9%80%81%E4%B8%8E%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E5%B0%8F%E4%BC%81%E4%B8%9A%E4%BC%9A%E8%AE%A1%E5%87%86%E5%88%99_%E6%9C%88%E5%AD%A3%E6%8A%A5.xls |
 
 ---
 
@@ -131,4 +143,5 @@ ASBE 报表格式。**附件1 = 未执行新准则版、附件2 = 已执行新�
 ## 五、已知缺口
 
 - 🟢 ~~`l10n_cn_ASBE_unexecuted_rowset.md` 尚未制备~~ → **已判定不需要**（2026-08-14）：**ASBE 未执行版 form 判定不做**，论据＝适用面（三项新准则对非上市 ASBE 企业均自 2021-01-01 施行，附件1 适用面≈0），见 `项目档 v32 §4.5.21`。⚠️ 该文件此前被 `status §5` 记为「材料已到位」并两次列入施工单随单材料，实际**从未存在过** ⇒ `background v19` **惯例 28**：写「已到位」必须同时给得出 raw 链接。
+- 🔴 **2026-08-15 订正（惯例 28 第三次实例）**：`项目档 §材料表` 长期记「ASBE 科目表 263 行 …… note 仓库 `l10n_cn_asbe_chart_reference.csv` **+ `科目表ASBE_企业会计准则.xlsx`**」，**后者在仓库 404、从未存在**。⇒ **项目档该行须删去 xlsx 指针**（csv 已核零差、足够引用），不是补文件。
 - 🟡 财会〔2019〕6号**附件1 / 附件2 无转录 txt**，`小企业会计准则` 两份、`第31号应用指南` 亦为 PDF-only。若下游消费方无 PDF 取文本能力，需先补转录。
