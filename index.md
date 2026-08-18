@@ -26,6 +26,9 @@
 | 2 | **`l10n_cn_localization_project.md`** | **设计权威** —— 模块结构、设计原则、口径与材料、版本沿革、作废清单 | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_localization_project.md |
 | 3 | **`background.md`** | **跨项目约束 + 惯例 1–27** —— 商业与品牌架构、基础设施与工作流、SuiteState 定位、模块清单、Apps Store 规则、Odoo 19 技术约束踩坑合集 | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/background.md |
 | 4 | **`l10n_cn_kingdee_material.md`** | 金蝶材料档 —— 中式账簿/凭证/科目/报表的一手规格来源：两条产品线对照、科目主数据模型、版式解析、凭证规则引擎、报表取数公式、与 Odoo 的差集总表、已作废条目 | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_kingdee_material.md |
+| 5 | 🆕 **`l10n_cn_changelog.md`** | 🔵 **冷档 —— 新窗口交接【不必读】**。`项目档 v41` 及更早的逐版沿革（24 行）。只在追溯「某条结论是哪一轮定的」时来查；怀疑结论被推翻**先查 `项目档 §6.7`**（那份是热的） | https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/l10n_cn_changelog.md |
+
+🔴 **「先读四份档」= 序 1–4，不含第 5 份。** 2026-08-19 量过：四份主档合计约 **236k tokens，已超过单个上下文窗口** ⇒ 通读不可行，实际用法是**按需检索**。冷档迁出是缩表的第一步。
 
 🔴 **`l10n_cn_design.md` 不在本仓库** —— 它在**开发分支** `suite_cn_localization/l10n_cn_design.md`，由开发侧同轮回写。note 侧不写、也拉不到（本仓库该路径返回 404）。
 
