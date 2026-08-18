@@ -2,6 +2,7 @@
 
 > 读此文件即知本仓库有哪些资料、各自 covers 什么、raw 链接在哪。
 > **新增任何文件时**（不限 md），在下方加一块：文件名 + 一句摘要 + raw 链接 + 可读性标记。
+> 🆕 **目录也要登记**（2026-08-19 起）：`kingdee_materials/` 见第六节。
 
 ## 🔴 取用规矩（先读这三条）
 
@@ -12,7 +13,8 @@
    - 🟡 **XLSX** = 二进制，需表格库
    ⇒ **凡 PDF 若已有转录 `.txt`，一律优先用 `.txt`**；本索引逐条标注。
 3. **文件名含空格须编码为 `%20`**（`legal documents/` 目录必然涉及）。中文文件名亦须 URL 编码。
-4. 🆕 **`raw` 会缓存 404（负缓存）** —— **「刚推上去就拉不到」不等于「推失败」。** 若在文件推送前探过一次该 URL，此后数分钟内拿到的都是缓存里的那个 404，换名字、换编码、换括号全形半形都没用。**处置：等几分钟原样重试**；仍 404 再查文件名。⚠️ 实例（2026-08-15）：两份税局 `.xls` 因此被误判为「没传上去」，实际已在仓库，12 种命名变体全试是白试。**排除法的前提是缓存不在中间**。
+4. 🔴 **网页链接 ≠ raw 链接。** GitHub 上复制到的 `https://github.com/.../blob/main/<文件>` 是**网页视图**，`curl` / `web_fetch` 拿到的是 HTML 外壳，**图片与二进制取不到字节**。**只有 `raw.githubusercontent.com/.../<文件>` 才是内容。**（2026-08-19：图片入库时踩到，登记以免重犯。）
+5. 🆕 **`raw` 会缓存 404（负缓存）** —— **「刚推上去就拉不到」不等于「推失败」。** 若在文件推送前探过一次该 URL，此后数分钟内拿到的都是缓存里的那个 404，换名字、换编码、换括号全形半形都没用。**处置：等几分钟原样重试**；仍 404 再查文件名。⚠️ 实例（2026-08-15）：两份税局 `.xls` 因此被误判为「没传上去」，实际已在仓库，12 种命名变体全试是白试。**排除法的前提是缓存不在中间**。
 
 ---
 
@@ -138,6 +140,25 @@ ASBE 报表格式。**附件1 = 未执行新准则版、附件2 = 已执行新�
   https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/legal%20documents/%E8%B4%A2%E4%BC%9A%E3%80%942018%E3%80%9535%E5%8F%B7%E3%80%8A%E4%BC%81%E4%B8%9A%E4%BC%9A%E8%AE%A1%E5%87%86%E5%88%99%E7%AC%AC21%E5%8F%B7%EF%BC%8D%E7%A7%9F%E8%B5%81%E3%80%8B.txt
 - 🟡 PDF — `财会〔2017〕7号附件《企业会计准则第22号——金融工具确认和计量》.pdf`  
   https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/legal%20documents/%E8%B4%A2%E4%BC%9A%E3%80%942017%E3%80%957%E5%8F%B7%E9%99%84%E4%BB%B6%E3%80%8A%E4%BC%81%E4%B8%9A%E4%BC%9A%E8%AE%A1%E5%87%86%E5%88%99%E7%AC%AC22%E5%8F%B7%E2%80%94%E2%80%94%E9%87%91%E8%9E%8D%E5%B7%A5%E5%85%B7%E7%A1%AE%E8%AE%A4%E5%92%8C%E8%AE%A1%E9%87%8F%E3%80%8B.pdf
+
+---
+
+## 🆕 六、金蝶一手原件（`kingdee_materials/`，2026-08-19 入库）
+
+> 🔴 **这些是「原件」，不是二次整理件** —— 引用时按 `observed` 挂级，并**写明是哪个载体**（打印模板 / 导出件 / 界面截图），见 `background` 惯例 29 ⑤⑥。
+> 🔴 **判读前先读** `l10n_cn_kingdee_material.md §0.1`（演示 / 试建账套警告）。
+> **raw 前缀**：`https://raw.githubusercontent.com/SuiteState-dev/note/refs/heads/main/kingdee_materials/`
+> **逐份登记与结论对位**：`l10n_cn_kingdee_material.md v5 §1.5`。
+
+| 文件 | 是什么 | 类型 |
+|---|---|---|
+| `kingdee_subledger_3col_export_wanjia_1002.png` | 🔴 **三栏式明细账导出件**（万佳设计 `1002`，2026 第1–7期）—— R51 形态锚 + **页脚公司名**依据 | 🟡 PNG |
+| `kingdee_subledger_qty_export_jiaxing_1403.png` | 🆕 **数量金额明细账导出件**（佳兴加固 `1403`，跨 2025–2026，共 4 页之第 1 页） | 🟡 PNG |
+| `kingdee_general_ledger_export_wanjia_p1.png` | **总账导出件第 1 页**（万佳设计 2026 第7期，共 2 页；11 科目） | 🟡 PNG |
+| `kingdee_coa_2221_children_p1.png` | `2221 应交税费` 子目 01–19 | 🟡 PNG |
+| `kingdee_coa_2221_children_p2.png` | `2221` 子目 20–23（合计 23 条） | 🟡 PNG |
+
+🟡 **PNG = 二进制**，`raw` 按字节返回；需读图能力才能用，**纯文本管道读不了**。
 
 ---
 
