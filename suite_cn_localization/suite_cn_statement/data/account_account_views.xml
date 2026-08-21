@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- R48-T1：把「余额方向」暴露到科目表单，让 Q5 告警指向的操作【真可达】(惯例11：入口
+       可见≠可用)。仅【客户自建科目】需在此手工指定;我方发行科目的权威方向在 ASSBE_CHART。
+       只在中国公司/中国科目表语境有意义,但字段本身无害、放主科目表单即可(不加国别可见性
+       门,避免碰官方视图的条件表达式)。 -->
+  <record id="view_account_form_cn_balance_direction" model="ir.ui.view">
+    <field name="name">account.account.form.cn.balance.direction</field>
+    <field name="model">account.account</field>
+    <field name="inherit_id" ref="account.view_account_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='account_type'][1]" position="after">
+        <field name="cn_balance_direction"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    现金流量表（企业会计准则 ASBE·草稿）。R11-T5：移出交付范围、manifest 不加载。
+    完整性待一手材料核（设计文档 §10 E-9 / R9-T3）；代码保留、T1-2 排除现金行修正已含。
+-->
+<odoo>
+    <record id="cn_cash_flow_a" model="account.report">
+        <field name="name">现金流量表（企业会计准则·草稿）</field>
+        <field name="country_id" ref="base.cn"/>
+        <field name="availability_condition">country</field>
+        <field name="filter_multi_company">selector</field>
+        <field name="filter_date_range" eval="True"/>
+        <field name="filter_unfold_all" eval="True"/>
+        <field name="column_ids">
+            <record id="cn_cf_a_col" model="account.report.column">
+                <field name="name">本期金额</field><field name="expression_label">balance</field>
+                <field name="figure_type">monetary</field><field name="sequence">1</field>
+            </record>
+        </field>
+        <field name="line_ids">
+            <record id="cn_cf_a_1" model="account.report.line">
+                <field name="name">1 销售商品、提供劳务收到的现金</field><field name="code">CN_CF_A_1</field><field name="sequence">1</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_1_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A1'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_2" model="account.report.line">
+                <field name="name">2 收到的税费返还</field><field name="code">CN_CF_A_2</field><field name="sequence">2</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_2_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A2'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_3" model="account.report.line">
+                <field name="name">3 收到其他与经营活动有关的现金</field><field name="code">CN_CF_A_3</field><field name="sequence">3</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_3_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A3'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_4" model="account.report.line">
+                <field name="name">4 购买商品、接受劳务支付的现金</field><field name="code">CN_CF_A_4</field><field name="sequence">4</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_4_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A4'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_5" model="account.report.line">
+                <field name="name">5 支付给职工以及为职工支付的现金</field><field name="code">CN_CF_A_5</field><field name="sequence">5</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_5_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A5'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_6" model="account.report.line">
+                <field name="name">6 支付的各项税费</field><field name="code">CN_CF_A_6</field><field name="sequence">6</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_6_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A6'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_7" model="account.report.line">
+                <field name="name">7 支付其他与经营活动有关的现金</field><field name="code">CN_CF_A_7</field><field name="sequence">7</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_7_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A7'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_8" model="account.report.line">
+                <field name="name">8 经营活动产生的现金流量净额</field><field name="code">CN_CF_A_8</field><field name="sequence">8</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_8_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">aggregation</field>
+                        <field name="formula">CN_CF_A_1.balance + CN_CF_A_2.balance + CN_CF_A_3.balance + CN_CF_A_4.balance + CN_CF_A_5.balance + CN_CF_A_6.balance + CN_CF_A_7.balance</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_9" model="account.report.line">
+                <field name="name">9 收回投资收到的现金</field><field name="code">CN_CF_A_9</field><field name="sequence">9</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_9_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A9'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_10" model="account.report.line">
+                <field name="name">10 取得投资收益收到的现金</field><field name="code">CN_CF_A_10</field><field name="sequence">10</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_10_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A10'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_11" model="account.report.line">
+                <field name="name">11 处置固定资产、无形资产和其他非流动资产收回的现金净额</field><field name="code">CN_CF_A_11</field><field name="sequence">11</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_11_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A11'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_12" model="account.report.line">
+                <field name="name">12 购建固定资产、无形资产和其他非流动资产支付的现金</field><field name="code">CN_CF_A_12</field><field name="sequence">12</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_12_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A12'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_13" model="account.report.line">
+                <field name="name">13 投资活动产生的现金流量净额</field><field name="code">CN_CF_A_13</field><field name="sequence">13</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_13_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">aggregation</field>
+                        <field name="formula">CN_CF_A_9.balance + CN_CF_A_10.balance + CN_CF_A_11.balance + CN_CF_A_12.balance</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_14" model="account.report.line">
+                <field name="name">14 取得借款收到的现金</field><field name="code">CN_CF_A_14</field><field name="sequence">14</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_14_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A14'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_15" model="account.report.line">
+                <field name="name">15 吸收投资者投资收到的现金</field><field name="code">CN_CF_A_15</field><field name="sequence">15</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_15_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A15'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_16" model="account.report.line">
+                <field name="name">16 偿还借款本金支付的现金</field><field name="code">CN_CF_A_16</field><field name="sequence">16</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_16_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A16'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_17" model="account.report.line">
+                <field name="name">17 分配利润或偿还利息支付的现金</field><field name="code">CN_CF_A_17</field><field name="sequence">17</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_17_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id.code', '=', 'A17'), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_18" model="account.report.line">
+                <field name="name">18 筹资活动产生的现金流量净额</field><field name="code">CN_CF_A_18</field><field name="sequence">18</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_18_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">aggregation</field>
+                        <field name="formula">CN_CF_A_14.balance + CN_CF_A_15.balance + CN_CF_A_16.balance + CN_CF_A_17.balance</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_19" model="account.report.line">
+                <field name="name">19 未分类现金流量（待归类）</field><field name="code">CN_CF_A_19</field><field name="sequence">19</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_19_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">['&amp;', '&amp;', ('cn_cash_flow_item_id', '=', False), ('account_id.account_type', '!=', 'asset_cash'), ('move_id.line_ids.account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">-sum</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_20" model="account.report.line">
+                <field name="name">20 四、现金净增加额</field><field name="code">CN_CF_A_20</field><field name="sequence">20</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_20_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">aggregation</field>
+                        <field name="formula">CN_CF_A_8.balance + CN_CF_A_13.balance + CN_CF_A_18.balance + CN_CF_A_19.balance</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_21" model="account.report.line">
+                <field name="name">21 加：期初现金及现金等价物余额</field><field name="code">CN_CF_A_21</field><field name="sequence">21</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_21_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">domain</field>
+                        <field name="formula">[('account_id.account_type', '=', 'asset_cash')]</field>
+                        <field name="subformula">sum</field>
+                        <field name="date_scope">to_beginning_of_period</field>
+                    </record>
+                </field>
+            </record>
+            <record id="cn_cf_a_22" model="account.report.line">
+                <field name="name">22 期末现金及现金等价物余额</field><field name="code">CN_CF_A_22</field><field name="sequence">22</field>
+                <field name="expression_ids">
+                    <record id="cn_cf_a_22_bal" model="account.report.expression">
+                        <field name="label">balance</field>
+                        <field name="engine">aggregation</field>
+                        <field name="formula">CN_CF_A_20.balance + CN_CF_A_21.balance</field>
+                    </record>
+                </field>
+            </record>
+        </field>
+    </record>
+</odoo>

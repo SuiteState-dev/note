@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- P-05 可移交性：现金流量分类配置 导出 / 导入 向导 (R25-T3) -->
+    <record id="cashflow_config_view_form" model="ir.ui.view">
+        <field name="name">suite.cn.cashflow.config.form</field>
+        <field name="model">suite.cn.cashflow.config</field>
+        <field name="arch" type="xml">
+            <form string="现金流量配置 导出/导入">
+                <sheet>
+                    <group>
+                        <field name="company_id" options="{'no_create': True}"/>
+                    </group>
+                    <notebook>
+                        <page string="导出" name="export">
+                            <div class="text-muted">
+                                导出「现金流量项目」与「科目默认映射」到一个 XLSX（两个 sheet，中文表头 + 编码列）。
+                                交接给接手实施方或客户自留，也可供其他系统读取。
+                            </div>
+                            <group>
+                                <button name="action_export" type="object" string="导出配置"
+                                        class="btn-primary" icon="fa-download"/>
+                            </group>
+                            <group>
+                                <field name="export_filename" invisible="1"/>
+                                <field name="export_file" filename="export_filename"
+                                       invisible="not export_file"/>
+                            </group>
+                        </page>
+                        <page string="导入" name="import">
+                            <div class="text-muted">
+                                上传本向导导出的 XLSX 读回配置（换库 / 换实施方 / 灾备）。
+                                <strong>增量更新</strong>：只新建/更新文件里的项，库里已有但文件未覆盖的项会<strong>保留</strong>并在结果中列出。
+                            </div>
+                            <group>
+                                <field name="import_filename" invisible="1"/>
+                                <field name="import_file" filename="import_filename"/>
+                            </group>
+                            <group>
+                                <button name="action_import" type="object" string="导入配置"
+                                        class="btn-primary" icon="fa-upload"
+                                        invisible="not import_file"/>
+                            </group>
+                            <field name="result" invisible="not result" readonly="1"
+                                   widget="text" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="cashflow_config_action" model="ir.actions.act_window">
+        <field name="name">现金流量配置 导出/导入</field>
+        <field name="res_model">suite.cn.cashflow.config</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="cashflow_config_menu"
+              name="现金流量配置 导出/导入"
+              parent="account.menu_finance_configuration"
+              action="cashflow_config_action"
+              sequence="92"/>
+</odoo>

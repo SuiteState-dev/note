@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+
+  <!-- ===== l10n_cn_assbe_bs : 年初余额 ===== -->
+  <record id="col_30_bal_begin" model="account.report.column">
+    <field name="report_id" ref="l10n_cn_reports.l10n_cn_assbe_bs"/>
+    <field name="name">年初余额</field>
+    <field name="expression_label">bal_begin</field>
+    <field name="sequence">900</field>
+  </record>
+  <record id="exp_243_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_mf"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">10</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_244_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_sti"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1101</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_245_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_nr"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1121</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_246_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ar"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1122</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_247_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_p"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1123</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_248_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_dr"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1131</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_249_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ir"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1132</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_250_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_or"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1221</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_251_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_st"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_RM.bal_begin + CNS_WIP.bal_begin + CNS_INV.bal_begin + CNS_WM.bal_begin</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_252_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_rm"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1403</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_253_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_wip"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <!-- R36-T1 缺陷#2:源头写国标口径(在产品=生产成本 4001),与官方 balance 一列同源。
+         此前读 1406 靠 suite_cn_coa 覆盖,但覆盖跑在本记录创建之前 → 静默漏,期末/年初两列打架。 -->
+    <field name="formula">4001</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_254_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_inv"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <!-- R36-T1 缺陷#2:含 1406(发出商品仍属存货,行11 腾出后落这里),与官方 balance 一列同源。 -->
+    <field name="formula">1401 + 1402 + 1404 + 1405 + 1406 + 1407 + 1408 + 1421</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_255_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_wm"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1411</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_256_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_oca"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">11\(1101, 1121, 1122, 1123, 1131, 1132) + 12\(1221) + 13 + 14\(1401, 1402, 1403, 1404, 1405, 1406, 1407, 1408, 1411, 1421)</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_257_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tca"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_MF.bal_begin + CNS_STI.bal_begin + CNS_NR.bal_begin + CNS_AR.bal_begin + CNS_P.bal_begin + CNS_DR.bal_begin + CNS_IR.bal_begin + CNS_OR.bal_begin + CNS_ST.bal_begin + CNS_OCA.bal_begin</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_259_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ltb"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1501</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_260_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_lte"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1511</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_261_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_fa"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1601</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_262_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_fad"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1602</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_263_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_fab"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_FA.bal_begin + CNS_FAD.bal_begin</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_264_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_cip"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1604</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_265_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_cm"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1605</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_266_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_lfa"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1606</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_267_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_pba"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1621 + 1622</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_268_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ia"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1701 + 1702</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_269_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_rdc"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1802</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_270_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ltde"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">1801</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_271_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_onca"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">15\(1501, 1511) + 16\(1601, 1602, 1604, 1605, 1606, 1621, 1622) + 17\(1701, 1702) + 18\(1801, 1802) + 19</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_272_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tnca"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_LTB.bal_begin + CNS_LTE.bal_begin + CNS_FAB.bal_begin + CNS_CIP.bal_begin + CNS_CM.bal_begin + CNS_LFA.bal_begin + CNS_PBA.bal_begin + CNS_IA.bal_begin + CNS_RDC.bal_begin + CNS_LTDE.bal_begin + CNS_ONCA.bal_begin</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_273_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ta"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_TCA.bal_begin + CNS_TNCA.bal_begin</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_276_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_stl"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 2001</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_277_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_np"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 2201</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_278_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ap"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 2202</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_279_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ac"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 2203</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_280_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_pp"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 2211</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_281_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tp"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 2221</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_282_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ip"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 2231</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_283_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_prp"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 2232</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_284_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_op"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 2241</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_285_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ocl"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 20\(2001) - 21 - 22\(2201, 2202, 2203, 2211, 2221, 2231, 2232, 2241) - 23</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_286_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tcl"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_STL.bal_begin + CNS_NP.bal_begin + CNS_AP.bal_begin + CNS_AC.bal_begin + CNS_PP.bal_begin + CNS_TP.bal_begin + CNS_IP.bal_begin + CNS_PRP.bal_begin + CNS_OP.bal_begin + CNS_OCL.bal_begin</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_288_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ltl"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 2501</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_289_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ltp"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 2701</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_290_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_di"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 2401</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_291_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_oncl"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 24\(2401) - 25\(2501) - 26 - 27\(2701) - 28 -29</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_292_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tncl"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_LTL.bal_begin + CNS_LTP.bal_begin + CNS_DI.bal_begin + CNS_ONCL.bal_begin</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_293_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tl"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_TCL.bal_begin + CNS_TNCL.bal_begin</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_295_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_pic"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 3001</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_296_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_cr"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 3002</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_297_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_sr"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 3101</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_298_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_udpl"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_CURR_YEAR_EARNINGS.bal_begin + CNS_PREV_YEAR_EARNINGS.bal_begin</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_299_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_curr_year_earnings"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">0.0</field>
+    <field name="date_scope">strict_range</field>
+  </record>
+  <record id="exp_300_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_prev_year_earnings"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_PREV_YEAR_EARNINGS.balance</field>
+    <field name="date_scope">strict_range</field>
+  </record>
+  <record id="exp_301_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_te"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_PIC.bal_begin + CNS_CR.bal_begin + CNS_SR.bal_begin + CNS_UDPL.bal_begin</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+  <record id="exp_302_bal_begin" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tle"/>
+    <field name="label">bal_begin</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_TL.bal_begin + CNS_TE.bal_begin</field>
+    <field name="date_scope">to_beginning_of_fiscalyear</field>
+  </record>
+
+  <!-- ===== l10n_cn_assbe_pl : 本年累计金额 ===== -->
+  <record id="col_27_ytd" model="account.report.column">
+    <field name="report_id" ref="l10n_cn_reports.l10n_cn_assbe_pl"/>
+    <field name="name">本年累计金额</field>
+    <field name="expression_label">ytd</field>
+    <field name="sequence">900</field>
+  </record>
+  <record id="exp_128_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_oi"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 50</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_129_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_oc"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <!-- R36-T1 缺陷#2:摘 4001(把生产成本从营业成本剔除,否则计入净利润),与官方 balance 一列同源。 -->
+    <field name="formula">54\(5403) + 55 + 56\(5601, 5602, 5603) + 40\(4001) + 41 + 42 + 44</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_130_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ots"/>
+    <field name="label">ytd</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_CT.ytd + CNS_BTS.ytd + CNS_UMCT.ytd + CNS_RT.ytd + CNS_LVAT.ytd + CNS_LPVS.ytd + CNS_EMP.ytd + CNS_OOTS.ytd</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_131_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ct"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">540301 + 5403.01</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_132_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_bts"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">540302 + 5403.02</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_133_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_umct"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">540303 + 5403.03</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_134_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_rt"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">540304 + 5403.04</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_135_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_lvat"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">540305 + 5403.05</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_136_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_lpvs"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">540306 + 540307 + 540308 + 540309 + 5403.06 + 5403.07 + 5403.08 + 5403.09</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_137_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_emp"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">540310 + 540311 + 540312 + 5403.10 + 5403.11 + 5403.12</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_138_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_oots"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">5403\(540301, 540302, 540303, 540304, 540305, 540306, 540307, 540308, 540309, 540310, 540311, 540312, 5403.01, 5403.02, 5403.03, 5403.04, 5403.05, 5403.06, 5403.07, 5403.08, 5403.09, 5403.10, 5403.11, 5403.12)</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_139_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_se"/>
+    <field name="label">ytd</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_PRF.ytd + CNS_APE.ytd + CNS_OSE.ytd</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_140_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_prf"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">560101 + 5601.01</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_141_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ape"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">560102 + 5601.02</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_142_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ose"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">5601\(560101, 560102, 5601.01, 5601.02)</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_143_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ae"/>
+    <field name="label">ytd</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_SUE.ytd + CNS_EE.ytd + CNS_RE.ytd + CNS_OAE.ytd</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_144_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_sue"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">560201 + 5602.01</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_145_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ee"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">560202 + 5602.02</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_146_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_re"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">560203 + 5602.03</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_147_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_oae"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">43 + 5602\(560201, 560202, 560203, 5602.01, 5602.02, 5602.03)</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_148_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_fe"/>
+    <field name="label">ytd</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_IE.ytd + CNS_OFE.ytd</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_149_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ie"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">560301 + 5603.01</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_150_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ofe"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">5603\(560301, 5603.01)</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_151_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ii"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 51</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_152_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_op"/>
+    <field name="label">ytd</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_OI.ytd - CNS_OC.ytd - CNS_OTS.ytd - CNS_SE.ytd - CNS_AE.ytd - CNS_FE.ytd + CNS_II.ytd</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_153_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_noi"/>
+    <field name="label">ytd</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_GS.ytd + CNS_ONOI.ytd</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_154_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_gs"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 530101 - 5301.01</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_155_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_onoi"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">- 53\(530101, 5301.01)</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_156_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_noe"/>
+    <field name="label">ytd</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_BDE.ytd + CNS_ULLB.ytd + CNS_ULLE.ytd + CNS_LCFM.ytd + CNS_LTPE.ytd + CNS_ONOE.ytd</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_157_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_bde"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">571101 + 5711.01</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_158_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ullb"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">571102 + 5711.02</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_159_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ulle"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">571103 + 5711.03</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_160_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_lcfm"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">571104 + 5711.04</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_161_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ltpe"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">571105 + 5711.05</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_162_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_onoe"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">57\(571101, 571102, 571103, 571104, 571105, 5711.01, 5711.02, 5711.03, 5711.04, 5711.05)</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_163_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_gp"/>
+    <field name="label">ytd</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_OP.ytd + CNS_NOI.ytd - CNS_NOE.ytd</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_164_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ite"/>
+    <field name="label">ytd</field>
+    <field name="engine">account_codes</field>
+    <field name="formula">58</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+  <record id="exp_165_ytd" model="account.report.expression">
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_nep"/>
+    <field name="label">ytd</field>
+    <field name="engine">aggregation</field>
+    <field name="formula">CNS_GP.ytd - CNS_ITE.ytd</field>
+    <field name="date_scope">from_fiscalyear</field>
+  </record>
+
+</odoo>

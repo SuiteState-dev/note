@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_publish_cn_coa_form" model="ir.ui.view">
+        <field name="name">suite.cn.coa.publish.form</field>
+        <field name="model">suite.cn.coa.publish</field>
+        <field name="arch" type="xml">
+            <form string="发行中国科目表">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>发行中国科目表（小企业会计准则）</h1>
+                    </div>
+                    <p class="text-muted">
+                        为使用小企业会计准则（chart cn）的公司发行国标 ASSBE 科目表。
+                        通用科目在装机时已自动发行；此处按<b>纳税人身份</b>补发税费科目。
+                        认领优先：已存在的编码不改名、不改类型，重复运行安全。
+                    </p>
+                    <group>
+                        <field name="company_ids" widget="many2many_tags"/>
+                        <field name="taxpayer"/>
+                    </group>
+                    <field name="result" invisible="not result"
+                           readonly="1" nolabel="1"
+                           style="white-space: pre-wrap; font-family: monospace;"/>
+                </sheet>
+                <footer>
+                    <button name="action_run" type="object" string="发行"
+                            class="btn-primary"/>
+                    <button string="关闭" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_publish_cn_coa" model="ir.actions.act_window">
+        <field name="name">发行中国科目表</field>
+        <field name="res_model">suite.cn.coa.publish</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_publish_cn_coa"
+              name="发行中国科目表"
+              parent="account.menu_finance_configuration"
+              action="action_publish_cn_coa"
+              sequence="99"
+              groups="account.group_account_manager"/>
+
+</odoo>

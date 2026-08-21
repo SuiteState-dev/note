@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cash_flow_item_view_list" model="ir.ui.view">
+        <field name="name">cash.flow.item.list</field>
+        <field name="model">cash.flow.item</field>
+        <field name="arch" type="xml">
+            <list string="Cash Flow Items" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="company_id" groups="base.group_multi_company" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="cash_flow_item_view_form" model="ir.ui.view">
+        <field name="name">cash.flow.item.form</field>
+        <field name="model">cash.flow.item</field>
+        <field name="arch" type="xml">
+            <form string="Cash Flow Item">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="category"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="cash_flow_item_action" model="ir.actions.act_window">
+        <field name="name">Cash Flow Items</field>
+        <field name="res_model">cash.flow.item</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a cash flow classification item</p>
+            <p>These items classify journal-item cash flows into the statutory
+               operating / investing / financing lines of the PRC cash flow statement.</p>
+        </field>
+    </record>
+
+    <menuitem id="cash_flow_item_menu"
+        name="Cash Flow Items"
+        parent="account.menu_finance_configuration"
+        action="cash_flow_item_action"
+        sequence="90"/>
+</odoo>

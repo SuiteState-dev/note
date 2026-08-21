@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_suite_cn_coa_generate,suite.cn.coa.generate,model_suite_cn_coa_generate,account.group_account_manager,1,1,1,1
+access_suite_cn_coa_adopted_group_ro,suite.cn.coa.adopted.group.ro,model_suite_cn_coa_adopted_group,account.group_account_readonly,1,0,0,0
+access_suite_cn_coa_adopted_group_mgr,suite.cn.coa.adopted.group.mgr,model_suite_cn_coa_adopted_group,account.group_account_manager,1,1,1,1
+access_suite_cn_coa_publish,suite.cn.coa.publish,model_suite_cn_coa_publish,account.group_account_manager,1,1,1,1
+access_suite_cn_coa_published_account_ro,suite.cn.coa.published.account.ro,model_suite_cn_coa_published_account,account.group_account_readonly,1,0,0,0
+access_suite_cn_coa_published_account_mgr,suite.cn.coa.published.account.mgr,model_suite_cn_coa_published_account,account.group_account_manager,1,1,1,1
+access_suite_cn_coa_report_override_ro,suite.cn.coa.report.override.ro,model_suite_cn_coa_report_override,account.group_account_readonly,1,0,0,0
+access_suite_cn_coa_report_override_mgr,suite.cn.coa.report.override.mgr,model_suite_cn_coa_report_override,account.group_account_manager,1,1,1,1
+access_suite_cn_coa_baseline_drift_ro,suite.cn.coa.baseline.drift.ro,model_suite_cn_coa_baseline_drift,account.group_account_readonly,1,0,0,0
+access_suite_cn_coa_baseline_drift_mgr,suite.cn.coa.baseline.drift.mgr,model_suite_cn_coa_baseline_drift,account.group_account_manager,1,1,1,1

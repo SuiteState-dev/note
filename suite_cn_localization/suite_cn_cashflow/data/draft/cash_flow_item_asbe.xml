@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    现金流量表分类项目（企业会计准则 ASBE·草稿）。R11-T5：移出交付范围、manifest 不加载。
+    完整性待一手材料核（设计文档 §10 E-9 / R9-T3）。
+-->
+<odoo>
+    <record id="cf_item_A1" model="cash.flow.item">
+        <field name="code">A1</field>
+        <field name="name">销售商品、提供劳务收到的现金</field>
+        <field name="sequence">1</field><field name="category">operating</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A2" model="cash.flow.item">
+        <field name="code">A2</field>
+        <field name="name">收到的税费返还</field>
+        <field name="sequence">2</field><field name="category">operating</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A3" model="cash.flow.item">
+        <field name="code">A3</field>
+        <field name="name">收到其他与经营活动有关的现金</field>
+        <field name="sequence">3</field><field name="category">operating</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A4" model="cash.flow.item">
+        <field name="code">A4</field>
+        <field name="name">购买商品、接受劳务支付的现金</field>
+        <field name="sequence">4</field><field name="category">operating</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A5" model="cash.flow.item">
+        <field name="code">A5</field>
+        <field name="name">支付给职工以及为职工支付的现金</field>
+        <field name="sequence">5</field><field name="category">operating</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A6" model="cash.flow.item">
+        <field name="code">A6</field>
+        <field name="name">支付的各项税费</field>
+        <field name="sequence">6</field><field name="category">operating</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A7" model="cash.flow.item">
+        <field name="code">A7</field>
+        <field name="name">支付其他与经营活动有关的现金</field>
+        <field name="sequence">7</field><field name="category">operating</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A9" model="cash.flow.item">
+        <field name="code">A9</field>
+        <field name="name">收回投资收到的现金</field>
+        <field name="sequence">9</field><field name="category">investing</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A10" model="cash.flow.item">
+        <field name="code">A10</field>
+        <field name="name">取得投资收益收到的现金</field>
+        <field name="sequence">10</field><field name="category">investing</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A11" model="cash.flow.item">
+        <field name="code">A11</field>
+        <field name="name">处置固定资产、无形资产和其他非流动资产收回的现金净额</field>
+        <field name="sequence">11</field><field name="category">investing</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A12" model="cash.flow.item">
+        <field name="code">A12</field>
+        <field name="name">购建固定资产、无形资产和其他非流动资产支付的现金</field>
+        <field name="sequence">12</field><field name="category">investing</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A14" model="cash.flow.item">
+        <field name="code">A14</field>
+        <field name="name">取得借款收到的现金</field>
+        <field name="sequence">14</field><field name="category">financing</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A15" model="cash.flow.item">
+        <field name="code">A15</field>
+        <field name="name">吸收投资者投资收到的现金</field>
+        <field name="sequence">15</field><field name="category">financing</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A16" model="cash.flow.item">
+        <field name="code">A16</field>
+        <field name="name">偿还借款本金支付的现金</field>
+        <field name="sequence">16</field><field name="category">financing</field>
+        <field name="standard">asbe</field>
+    </record>
+    <record id="cf_item_A17" model="cash.flow.item">
+        <field name="code">A17</field>
+        <field name="name">分配利润或偿还利息支付的现金</field>
+        <field name="sequence">17</field><field name="category">financing</field>
+        <field name="standard">asbe</field>
+    </record>
+</odoo>

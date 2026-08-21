@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- P-05 可移交性：分录级现金流量项目归属 导出 / 回填 向导 (R27-T3) -->
+    <record id="cashflow_line_export_view_form" model="ir.ui.view">
+        <field name="name">suite.cn.cashflow.line.export.form</field>
+        <field name="model">suite.cn.cashflow.line.export</field>
+        <field name="arch" type="xml">
+            <form string="现金流量项目归属 导出/回填（分录级）">
+                <sheet>
+                    <group>
+                        <field name="company_id" options="{'no_create': True}"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <notebook>
+                        <page string="导出" name="export">
+                            <div class="text-muted">
+                                导出每条分录的<strong>现金流量项目归属</strong>（哪条分录挂哪个项目）到一个
+                                <strong>CSV</strong>（UTF-8，中文表头 + 项目编码/名称双列）。用文本编辑器或 Excel 都能打开，
+                                其他系统也能读。<strong>卸载本模块前请先在此导出</strong>——卸载会删除分录上的分类列，数据不可逆丢失。
+                            </div>
+                            <group>
+                                <button name="action_export" type="object" string="导出归属 (CSV)"
+                                        class="btn-primary" icon="fa-download"/>
+                            </group>
+                            <group>
+                                <field name="export_filename" invisible="1"/>
+                                <field name="export_file" filename="export_filename"
+                                       invisible="not export_file"/>
+                            </group>
+                        </page>
+                        <page string="回填" name="import">
+                            <div class="text-muted">
+                                上传本向导导出的 CSV，把分类<strong>回填</strong>到分录上（卸载重装后恢复）。
+                                以「分录ID」为键、<strong>只更新已存在的分录、绝不新建凭证</strong>；
+                                <strong>换库回填只在导出的同一数据库有效</strong>（分录ID 跨库不同）。
+                                找不到的分录ID / 未知的项目编码会<strong>跳过并在结果中列出</strong>。
+                            </div>
+                            <group>
+                                <field name="import_filename" invisible="1"/>
+                                <field name="import_file" filename="import_filename"/>
+                            </group>
+                            <group>
+                                <button name="action_import" type="object" string="回填归属"
+                                        class="btn-primary" icon="fa-upload"
+                                        invisible="not import_file"/>
+                            </group>
+                            <field name="result" invisible="not result" readonly="1"
+                                   widget="text" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="cashflow_line_export_action" model="ir.actions.act_window">
+        <field name="name">现金流量项目归属 导出/回填</field>
+        <field name="res_model">suite.cn.cashflow.line.export</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="cashflow_line_export_menu"
+              name="现金流量项目归属 导出/回填"
+              parent="account.menu_finance_configuration"
+              action="cashflow_line_export_action"
+              sequence="93"/>
+</odoo>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+      科目余额表 —— 严格六 / 八栏 (R47-T1)。
+
+      【新建】报表，挂官方 Trial Balance 变体（root_report_id）取得菜单可达（照 R23-T1
+      CF 变体先例：country=CN 公司打开官方 Trial Balance 自动落我方变体）。自带
+      custom_handler（suite.cn.trial.balance.report.handler），官方 TB 记录/引擎/handler
+      三个都不碰。
+
+      六 / 八栏 = 同一张报表两种列集（handler `_custom_options_initializer` 里一个开关
+      cn_tb_columns 切换），不做两个 account.report 记录。八栏 = 六栏 + 本年累计发生额
+      借/贷（插在本期发生额与期末余额之间）。
+
+      单条 report.line + groupby=account_id：叶子账户动态出（覆盖客户自建账户，Σ借=Σ贷
+      全集才完整）；一级汇总在 handler 后处理器按点分前缀合成（R47 选 B）。
+      同一行 8 个表达式、各自 date_scope 各喂一列 —— 与官方 BS「balance / bal_begin 同行
+      异 date_scope」同构。
+    -->
+    <record id="cn_trial_balance" model="account.report">
+        <field name="name">科目余额表</field>
+        <field name="root_report_id" ref="account_reports.trial_balance_report"/>
+        <field name="availability_condition">country</field>
+        <field name="country_id" ref="base.cn"/>
+        <field name="custom_handler_model_id" ref="model_suite_cn_trial_balance_report_handler"/>
+        <field name="filter_date_range" eval="True"/>
+        <field name="filter_multi_company">selector</field>
+        <field name="filter_journals" eval="True"/>
+        <field name="filter_unfold_all" eval="True"/>
+        <!-- 层级一律走 account_codes 点分前缀（handler 合成），绝不走 account.group：
+             官方 hierarchy 靠 account.group，本轮禁 → 显式关掉，防变体继承官方 by_default。 -->
+        <field name="filter_hierarchy">never</field>
+        <!-- 判据8：无发生额且无余额的科目——SQL 按窗口 groupby，某账户任一窗口无分录即不
+             返回该窗口值；四窗口全无 → 不出行（当前行为）。hide_0_lines=optional 给用户一个
+             「隐藏本期全 0 行」开关（可配）。回报据实说明，不预设对错。 -->
+        <field name="filter_hide_0_lines">optional</field>
+        <field name="default_opening_date_filter">this_month</field>
+        <field name="search_bar" eval="True"/>
+        <field name="column_ids">
+            <!-- 期初余额·借 / 贷 —— to_beginning_of_period（新列，非复用 bal_begin=年初） -->
+            <record id="cn_tb_col_open_d" model="account.report.column">
+                <field name="name">期初余额·借</field>
+                <field name="expression_label">open_d</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">10</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <record id="cn_tb_col_open_c" model="account.report.column">
+                <field name="name">期初余额·贷</field>
+                <field name="expression_label">open_c</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">20</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <!-- 本期发生额·借 / 贷 —— strict_range，毛额 -->
+            <record id="cn_tb_col_period_d" model="account.report.column">
+                <field name="name">本期发生额·借</field>
+                <field name="expression_label">period_d</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">30</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <record id="cn_tb_col_period_c" model="account.report.column">
+                <field name="name">本期发生额·贷</field>
+                <field name="expression_label">period_c</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">40</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <!-- 本年累计发生额·借 / 贷 —— from_fiscalyear，毛额（八栏专有，六栏时 handler 抽掉） -->
+            <record id="cn_tb_col_ytd_d" model="account.report.column">
+                <field name="name">本年累计发生额·借</field>
+                <field name="expression_label">ytd_d</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">50</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <record id="cn_tb_col_ytd_c" model="account.report.column">
+                <field name="name">本年累计发生额·贷</field>
+                <field name="expression_label">ytd_c</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">60</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <!-- 期末余额·借 / 贷 —— from_beginning（累计到期末，按净额符号分借贷） -->
+            <record id="cn_tb_col_close_d" model="account.report.column">
+                <field name="name">期末余额·借</field>
+                <field name="expression_label">close_d</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">70</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <record id="cn_tb_col_close_c" model="account.report.column">
+                <field name="name">期末余额·贷</field>
+                <field name="expression_label">close_c</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">80</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+        </field>
+        <field name="line_ids">
+            <record id="cn_tb_line" model="account.report.line">
+                <field name="name">科目余额表</field>
+                <field name="code">CN_TB</field>
+                <field name="groupby">account_id</field>
+                <field name="foldable" eval="False"/>
+                <field name="expression_ids">
+                    <record id="cn_tb_exp_open_d" model="account.report.expression">
+                        <field name="label">open_d</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cn_trial_balance</field>
+                        <field name="subformula">bal_debit</field>
+                        <field name="date_scope">to_beginning_of_period</field>
+                        <field name="blank_if_zero" eval="True"/>
+                    </record>
+                    <record id="cn_tb_exp_open_c" model="account.report.expression">
+                        <field name="label">open_c</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cn_trial_balance</field>
+                        <field name="subformula">bal_credit</field>
+                        <field name="date_scope">to_beginning_of_period</field>
+                        <field name="blank_if_zero" eval="True"/>
+                    </record>
+                    <record id="cn_tb_exp_period_d" model="account.report.expression">
+                        <field name="label">period_d</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cn_trial_balance</field>
+                        <field name="subformula">debit</field>
+                        <field name="date_scope">strict_range</field>
+                        <field name="blank_if_zero" eval="True"/>
+                    </record>
+                    <record id="cn_tb_exp_period_c" model="account.report.expression">
+                        <field name="label">period_c</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cn_trial_balance</field>
+                        <field name="subformula">credit</field>
+                        <field name="date_scope">strict_range</field>
+                        <field name="blank_if_zero" eval="True"/>
+                    </record>
+                    <record id="cn_tb_exp_ytd_d" model="account.report.expression">
+                        <field name="label">ytd_d</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cn_trial_balance</field>
+                        <field name="subformula">debit</field>
+                        <field name="date_scope">from_fiscalyear</field>
+                        <field name="blank_if_zero" eval="True"/>
+                    </record>
+                    <record id="cn_tb_exp_ytd_c" model="account.report.expression">
+                        <field name="label">ytd_c</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cn_trial_balance</field>
+                        <field name="subformula">credit</field>
+                        <field name="date_scope">from_fiscalyear</field>
+                        <field name="blank_if_zero" eval="True"/>
+                    </record>
+                    <record id="cn_tb_exp_close_d" model="account.report.expression">
+                        <field name="label">close_d</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cn_trial_balance</field>
+                        <field name="subformula">bal_debit</field>
+                        <field name="date_scope">from_beginning</field>
+                        <field name="blank_if_zero" eval="True"/>
+                    </record>
+                    <record id="cn_tb_exp_close_c" model="account.report.expression">
+                        <field name="label">close_c</field>
+                        <field name="engine">custom</field>
+                        <field name="formula">_report_custom_engine_cn_trial_balance</field>
+                        <field name="subformula">bal_credit</field>
+                        <field name="date_scope">from_beginning</field>
+                        <field name="blank_if_zero" eval="True"/>
+                    </record>
+                </field>
+            </record>
+        </field>
+    </record>
+</odoo>

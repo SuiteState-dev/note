@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+      中式三栏式明细分类账 (R51-T1)。
+
+      法源 = 《会计基础工作规范》§63(二) + 金蝶三栏式明细账【打印模板 + 导出件双证】
+      （项目档 v43 §4.5.22，唯一归宿；kingdee v4 §3.6b 三：模板列 month/day/vchnum/
+      explanation/debit/credit/dc/endbal，与导出件截图逐列一致 ⇒ 版式锚双证闭合）。
+      Odoo 官方 General Ledger 即三栏式明细账形态，但无中式版式（无方向/余额单栏、无
+      期初/本期合计/本年累计中式行型、无逐笔滚动余额中式列序）—— 版式缺口。
+
+      【新建】报表，挂官方 General Ledger 变体（root_report_id）取菜单可达（同 R47/R49
+      先例）。自带 custom_handler（suite.cn.subsidiary.ledger.report.handler），官方
+      GL 记录/引擎/handler 三个都不碰（惯例31：禁对象不禁手段）。
+
+      与总账(R49/R50)同源、三处形态不同（§4.5.22 五，别照抄）——
+        1. 日期列 = 分录【实际日期】YYYY-MM-DD（account_move_line.date），不是总账期间号
+           YYYYMM。🔴 「同月明细行日期相同」是金蝶那个账套月末集中入账的记账习惯、非版式
+           规则（§4.5.22 四 / kingdee v4 §0.1）⇒ 绝不实现成期间末日。
+        2. 有【凭证字号】列（move.name，形如「记-3」），总账没有。
+        3. 逐笔明细行 + 余额【逐笔滚动】，总账只有期汇总。
+      方向/余额规则、本期合计+本年累计逐期滚动、零值留空【完全复用总账】（§4.5.22 一，
+      属性制：余额0→平/余额空；非零→方向取科目属性、余额带符号）。
+
+      列（导出件锚，7 列）：日期 · 凭证字号 · 摘要 · 借方发生额 · 贷方发生额 · 方向 · 余额。
+      屏幕行：name 承载【摘要】，其余 6 列为 account.report.column（日期/凭证字号/借/贷/
+      方向/余额）；科目落段头行（导出件里科目在表头，非表内列）。中式版式 XLSX 出全 7 列。
+
+      纯 _dynamic_lines_generator 报表（行由 handler 全权生成、无静态 line_ids）：逐笔行不吃
+      列式 date_scope，故用 dynamic 生成器（官方 GL 同款机制）。取数经 _get_report_query
+      拿期初(to_beginning_of_fiscalyear)与本年度逐笔(from_fiscalyear，不聚合)，honoring
+      期间/日记账/过账/多公司 全部筛选。
+    -->
+    <record id="cn_subsidiary_ledger" model="account.report">
+        <field name="name">三栏式明细分类账</field>
+        <field name="root_report_id" ref="account_reports.general_ledger_report"/>
+        <field name="availability_condition">country</field>
+        <field name="country_id" ref="base.cn"/>
+        <field name="custom_handler_model_id"
+               ref="model_suite_cn_subsidiary_ledger_report_handler"/>
+        <field name="filter_date_range" eval="True"/>
+        <field name="filter_multi_company">selector</field>
+        <field name="filter_journals" eval="True"/>
+        <field name="filter_unfold_all" eval="True"/>
+        <!-- 层级绝不走 account.group（同 TB/GL）：一级由 handler 点分前缀合成。 -->
+        <field name="filter_hierarchy">never</field>
+        <field name="default_opening_date_filter">this_year</field>
+        <field name="search_bar" eval="True"/>
+        <field name="column_ids">
+            <!-- 日期 = 分录实际日期 YYYY-MM-DD（string 型，逐笔行有值、合计/期初行空）。 -->
+            <record id="cn_sl_col_date" model="account.report.column">
+                <field name="name">日期</field>
+                <field name="expression_label">date_txt</field>
+                <field name="figure_type">string</field>
+                <field name="sequence">10</field>
+            </record>
+            <!-- 凭证字号 = move.name（string；逐笔行有值、期初/合计行空）。 -->
+            <record id="cn_sl_col_voucher" model="account.report.column">
+                <field name="name">凭证字号</field>
+                <field name="expression_label">voucher</field>
+                <field name="figure_type">string</field>
+                <field name="sequence">20</field>
+            </record>
+            <record id="cn_sl_col_debit" model="account.report.column">
+                <field name="name">借方发生额</field>
+                <field name="expression_label">debit_amt</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">30</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <record id="cn_sl_col_credit" model="account.report.column">
+                <field name="name">贷方发生额</field>
+                <field name="expression_label">credit_amt</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">40</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <!-- 方向 = 借/贷/平 标签栏（§60(七)，属性制，与总账共用一条规则）。恒显、非 blank。 -->
+            <record id="cn_sl_col_direction" model="account.report.column">
+                <field name="name">方向</field>
+                <field name="expression_label">direction</field>
+                <field name="figure_type">string</field>
+                <field name="sequence">50</field>
+            </record>
+            <!-- 余额 = 单栏、逐笔滚动、带符号（实际方向与属性相反为负）；平时 handler 传 None
+                 ⇒ 留空，故加 blank_if_zero 双保险。 -->
+            <record id="cn_sl_col_balance" model="account.report.column">
+                <field name="name">余额</field>
+                <field name="expression_label">balance</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">60</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+        </field>
+    </record>
+</odoo>

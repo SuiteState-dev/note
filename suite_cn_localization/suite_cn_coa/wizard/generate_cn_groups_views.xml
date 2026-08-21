@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_generate_cn_groups_form" model="ir.ui.view">
+        <field name="name">suite.cn.coa.generate.form</field>
+        <field name="model">suite.cn.coa.generate</field>
+        <field name="arch" type="xml">
+            <form string="生成中国科目分级">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>生成中国科目分级</h1>
+                    </div>
+                    <p class="text-muted">
+                        为使用中国科目表（小企业会计准则 / 共同基础 / 企业会计准则）的公司
+                        生成 account.group 分级树。可重复运行。
+                    </p>
+                    <group>
+                        <field name="company_ids" widget="many2many_tags"/>
+                        <field name="mode"/>
+                    </group>
+                    <field name="result" invisible="not result"
+                           readonly="1" nolabel="1"
+                           style="white-space: pre-wrap; font-family: monospace;"/>
+                </sheet>
+                <footer>
+                    <button name="action_run" type="object" string="运行"
+                            class="btn-primary"/>
+                    <button string="关闭" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_generate_cn_groups" model="ir.actions.act_window">
+        <field name="name">生成中国科目分级</field>
+        <field name="res_model">suite.cn.coa.generate</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_generate_cn_groups"
+              name="生成中国科目分级"
+              parent="account.menu_finance_configuration"
+              action="action_generate_cn_groups"
+              sequence="100"
+              groups="account.group_account_manager"/>
+
+</odoo>

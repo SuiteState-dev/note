@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+
+  <!-- ======= 资产负债表 (two-column) ======= -->
+  <!-- ASSBE 资产负债表: 月季报与年报逐格相同(表名/表号/列头全同,无期间后缀,
+       verified R26) → period_scope='any' 一条复用两种报送期间. -->
+  <record id="cn_form_bs" model="suite.cn.statement.form">
+    <field name="report_id" ref="l10n_cn_reports.l10n_cn_assbe_bs"/>
+    <field name="title">资产负债表</field>
+    <field name="title_suffix">（适用执行小企业会计准则的企业）</field>
+    <field name="form_no">会小企01表</field>
+    <field name="sheet_name">资产负债表</field>
+    <field name="layout">two_column</field>
+    <field name="period_mode">point</field>
+    <field name="period_scope">any</field>
+    <field name="standard_version">na</field>
+  </record>
+  <record id="cn_col_bs_1" model="suite.cn.statement.column">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">10</field>
+    <field name="header">期末余额</field><field name="expression_label">balance</field>
+  </record>
+  <record id="cn_col_bs_2" model="suite.cn.statement.column">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">20</field>
+    <field name="header">年初余额</field><field name="expression_label">bal_begin</field>
+  </record>
+
+  <record id="cn_row_bs_L_10" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">10</field>
+    <field name="row_no"></field><field name="name">流动资产：</field>
+    <field name="section">left</field>
+    <field name="is_header" eval="True"/>
+  </record>
+  <record id="cn_row_bs_L_20" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">20</field>
+    <field name="row_no">1</field><field name="name">货币资金</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_mf"/>
+  </record>
+  <record id="cn_row_bs_L_30" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">30</field>
+    <field name="row_no">2</field><field name="name">短期投资</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_sti"/>
+  </record>
+  <record id="cn_row_bs_L_40" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">40</field>
+    <field name="row_no">3</field><field name="name">应收票据</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_nr"/>
+  </record>
+  <record id="cn_row_bs_L_50" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">50</field>
+    <field name="row_no">4</field><field name="name">应收账款</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ar"/>
+  </record>
+  <record id="cn_row_bs_L_60" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">60</field>
+    <field name="row_no">5</field><field name="name">预付账款</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_p"/>
+  </record>
+  <record id="cn_row_bs_L_70" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">70</field>
+    <field name="row_no">6</field><field name="name">应收股利</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_dr"/>
+  </record>
+  <record id="cn_row_bs_L_80" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">80</field>
+    <field name="row_no">7</field><field name="name">应收利息</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ir"/>
+  </record>
+  <record id="cn_row_bs_L_90" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">90</field>
+    <field name="row_no">8</field><field name="name">其他应收款</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_or"/>
+  </record>
+  <record id="cn_row_bs_L_100" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">100</field>
+    <field name="row_no">9</field><field name="name">存货</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_st"/>
+  </record>
+  <record id="cn_row_bs_L_110" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">110</field>
+    <field name="row_no">10</field><field name="name">其中：原材料</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_rm"/>
+  </record>
+  <record id="cn_row_bs_L_120" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">120</field>
+    <field name="row_no">11</field><field name="name">在产品</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_wip"/>
+  </record>
+  <record id="cn_row_bs_L_130" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">130</field>
+    <field name="row_no">12</field><field name="name">库存商品</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_inv"/>
+  </record>
+  <record id="cn_row_bs_L_140" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">140</field>
+    <field name="row_no">13</field><field name="name">周转材料</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_wm"/>
+  </record>
+  <record id="cn_row_bs_L_150" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">150</field>
+    <field name="row_no">14</field><field name="name">其他流动资产</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_oca"/>
+  </record>
+  <record id="cn_row_bs_L_160" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">160</field>
+    <field name="row_no">15</field><field name="name">流动资产合计</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tca"/>
+  </record>
+  <record id="cn_row_bs_L_170" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">170</field>
+    <field name="row_no"></field><field name="name">非流动资产：</field>
+    <field name="section">left</field>
+    <field name="is_header" eval="True"/>
+  </record>
+  <record id="cn_row_bs_L_180" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">180</field>
+    <field name="row_no">16</field><field name="name">长期债券投资</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ltb"/>
+  </record>
+  <record id="cn_row_bs_L_190" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">190</field>
+    <field name="row_no">17</field><field name="name">长期股权投资</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_lte"/>
+  </record>
+  <record id="cn_row_bs_L_200" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">200</field>
+    <field name="row_no">18</field><field name="name">固定资产原价</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_fa"/>
+  </record>
+  <record id="cn_row_bs_L_210" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">210</field>
+    <field name="row_no">19</field><field name="name">减：累计折旧</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_fad"/>
+  </record>
+  <record id="cn_row_bs_L_220" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">220</field>
+    <field name="row_no">20</field><field name="name">固定资产账面价值</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_fab"/>
+  </record>
+  <record id="cn_row_bs_L_230" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">230</field>
+    <field name="row_no">21</field><field name="name">在建工程</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_cip"/>
+  </record>
+  <record id="cn_row_bs_L_240" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">240</field>
+    <field name="row_no">22</field><field name="name">工程物资</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_cm"/>
+  </record>
+  <record id="cn_row_bs_L_250" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">250</field>
+    <field name="row_no">23</field><field name="name">固定资产清理</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_lfa"/>
+  </record>
+  <record id="cn_row_bs_L_260" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">260</field>
+    <field name="row_no">24</field><field name="name">生产性生物资产</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_pba"/>
+  </record>
+  <record id="cn_row_bs_L_270" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">270</field>
+    <field name="row_no">25</field><field name="name">无形资产</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ia"/>
+  </record>
+  <record id="cn_row_bs_L_280" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">280</field>
+    <field name="row_no">26</field><field name="name">开发支出</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_rdc"/>
+  </record>
+  <record id="cn_row_bs_L_290" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">290</field>
+    <field name="row_no">27</field><field name="name">长期待摊费用</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ltde"/>
+  </record>
+  <record id="cn_row_bs_L_300" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">300</field>
+    <field name="row_no">28</field><field name="name">其他非流动资产</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_onca"/>
+  </record>
+  <record id="cn_row_bs_L_310" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">310</field>
+    <field name="row_no">29</field><field name="name">非流动资产合计</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tnca"/>
+  </record>
+  <!-- 🔴 R45-T3:行次30【故意偏离税局表样·第二处已登记偏离】。税局采集件(月季报+年报
+       两册)此行均写「资产合计」,但其【右栏行53】写「负债和所有者权益(或股东权益)总计」
+       ——左「合计」/右「总计」税局模板自身不一致(疑同族笔误,同行24 生物性/生产性)。我方
+       两侧规整为对称「总计」:行30=资产总计 / 行53=…总计(准则正表左右对称)。故与月季/年报
+       夹具此行【故意不逐字一致】,§4.5.7.3 例外条款(税局笔误不照搬)。勿为「对齐夹具」改回
+       「资产合计」——test_bs_deliberate_deviations_from_bureau_typos 已钉住。 -->
+  <record id="cn_row_bs_L_320" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">320</field>
+    <field name="row_no">30</field><field name="name">资产总计</field>
+    <field name="section">left</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ta"/>
+  </record>
+  <record id="cn_row_bs_R_10" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">10</field>
+    <field name="row_no"></field><field name="name">流动负债：</field>
+    <field name="section">right</field>
+    <field name="is_header" eval="True"/>
+  </record>
+  <record id="cn_row_bs_R_20" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">20</field>
+    <field name="row_no">31</field><field name="name">短期借款</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_stl"/>
+  </record>
+  <record id="cn_row_bs_R_30" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">30</field>
+    <field name="row_no">32</field><field name="name">应付票据</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_np"/>
+  </record>
+  <record id="cn_row_bs_R_40" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">40</field>
+    <field name="row_no">33</field><field name="name">应付账款</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ap"/>
+  </record>
+  <record id="cn_row_bs_R_50" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">50</field>
+    <field name="row_no">34</field><field name="name">预收账款</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ac"/>
+  </record>
+  <record id="cn_row_bs_R_60" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">60</field>
+    <field name="row_no">35</field><field name="name">应付职工薪酬</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_pp"/>
+  </record>
+  <record id="cn_row_bs_R_70" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">70</field>
+    <field name="row_no">36</field><field name="name">应交税费</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tp"/>
+  </record>
+  <record id="cn_row_bs_R_80" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">80</field>
+    <field name="row_no">37</field><field name="name">应付利息</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ip"/>
+  </record>
+  <record id="cn_row_bs_R_90" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">90</field>
+    <field name="row_no">38</field><field name="name">应付利润</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_prp"/>
+  </record>
+  <record id="cn_row_bs_R_100" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">100</field>
+    <field name="row_no">39</field><field name="name">其他应付款</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_op"/>
+  </record>
+  <record id="cn_row_bs_R_110" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">110</field>
+    <field name="row_no">40</field><field name="name">其他流动负债</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ocl"/>
+  </record>
+  <record id="cn_row_bs_R_120" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">120</field>
+    <field name="row_no">41</field><field name="name">流动负债合计</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tcl"/>
+  </record>
+  <record id="cn_row_bs_R_130" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">130</field>
+    <field name="row_no"></field><field name="name">非流动负债：</field>
+    <field name="section">right</field>
+    <field name="is_header" eval="True"/>
+  </record>
+  <record id="cn_row_bs_R_140" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">140</field>
+    <field name="row_no">42</field><field name="name">长期借款</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ltl"/>
+  </record>
+  <record id="cn_row_bs_R_150" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">150</field>
+    <field name="row_no">43</field><field name="name">长期应付款</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_ltp"/>
+  </record>
+  <record id="cn_row_bs_R_160" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">160</field>
+    <field name="row_no">44</field><field name="name">递延收益</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_di"/>
+  </record>
+  <record id="cn_row_bs_R_170" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">170</field>
+    <field name="row_no">45</field><field name="name">其他非流动负债</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_oncl"/>
+  </record>
+  <record id="cn_row_bs_R_180" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">180</field>
+    <field name="row_no">46</field><field name="name">非流动负债合计</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tncl"/>
+  </record>
+  <record id="cn_row_bs_R_190" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">190</field>
+    <field name="row_no">47</field><field name="name">负债合计</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tl"/>
+  </record>
+  <record id="cn_row_bs_R_200" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">200</field>
+    <field name="row_no"></field><field name="name">所有者权益（或股东权益）：</field>
+    <field name="section">right</field>
+    <field name="is_header" eval="True"/>
+  </record>
+  <record id="cn_row_bs_R_210" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">210</field>
+    <field name="row_no">48</field><field name="name">实收资本（或股本）</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_pic"/>
+  </record>
+  <record id="cn_row_bs_R_220" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">220</field>
+    <field name="row_no">49</field><field name="name">资本公积</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_cr"/>
+  </record>
+  <record id="cn_row_bs_R_230" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">230</field>
+    <field name="row_no">50</field><field name="name">盈余公积</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_sr"/>
+  </record>
+  <record id="cn_row_bs_R_240" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">240</field>
+    <field name="row_no">51</field><field name="name">未分配利润</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_udpl"/>
+  </record>
+  <record id="cn_row_bs_R_250" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">250</field>
+    <field name="row_no">52</field><field name="name">所有者权益（或股东权益）合计</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_te"/>
+  </record>
+  <record id="cn_row_bs_R_260" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_bs"/><field name="sequence">260</field>
+    <field name="row_no">53</field><field name="name">负债和所有者权益（或股东权益）总计</field>
+    <field name="section">right</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_bs_cns_tle"/>
+  </record>
+
+  <!-- ======= 利润表 月季报 (single, 本期金额|本年累计金额 — 对齐税局报送采集模板 R27) ======= -->
+  <record id="cn_form_pl" model="suite.cn.statement.form">
+    <field name="report_id" ref="l10n_cn_reports.l10n_cn_assbe_pl"/>
+    <field name="title">利润表</field>
+    <field name="title_suffix">（适用执行小企业会计准则的企业）</field>
+    <field name="form_no">会小企02表</field>
+    <field name="sheet_name">利润表_月季报</field>
+    <field name="layout">single</field>
+    <field name="period_mode">range</field>
+    <field name="period_scope">monthly_quarterly</field>
+    <field name="standard_version">na</field>
+  </record>
+  <!-- R27: 官方月季报利润表列序=本期金额(左)|本年累计金额(右)，措辞「本期」非「本月」
+       (季报时本期=本季)。逐格对位 tests/fixtures 月季报.xls (4,3)/(4,4)。 -->
+  <record id="cn_col_pl_1" model="suite.cn.statement.column">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">10</field>
+    <field name="header">本期金额</field><field name="expression_label">balance</field>
+  </record>
+  <record id="cn_col_pl_2" model="suite.cn.statement.column">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">20</field>
+    <field name="header">本年累计金额</field><field name="expression_label">ytd</field>
+  </record>
+
+  <!-- ======= 利润表 年报 (R26-T2): 本年累计金额 | 上年金额.
+       行结构借用月季报 cn_form_pl (rows_from_id) → 两版行永不漂移.
+       上年金额 = same_last_year comparison group (R24 现成机制). ======= -->
+  <record id="cn_form_pl_annual" model="suite.cn.statement.form">
+    <field name="report_id" ref="l10n_cn_reports.l10n_cn_assbe_pl"/>
+    <field name="title">利润表</field>
+    <field name="title_suffix">（适用执行小企业会计准则的企业）</field>
+    <field name="form_no">会小企02表</field>
+    <field name="sheet_name">利润表_年</field>
+    <field name="layout">single</field>
+    <field name="period_mode">range</field>
+    <field name="period_scope">annual</field>
+    <field name="standard_version">na</field>
+    <field name="rows_from_id" ref="cn_form_pl"/>
+  </record>
+  <record id="cn_col_pl_annual_1" model="suite.cn.statement.column">
+    <field name="form_id" ref="cn_form_pl_annual"/><field name="sequence">10</field>
+    <field name="header">本年累计金额</field><field name="expression_label">ytd</field>
+    <field name="column_group">primary</field>
+  </record>
+  <record id="cn_col_pl_annual_2" model="suite.cn.statement.column">
+    <field name="form_id" ref="cn_form_pl_annual"/><field name="sequence">20</field>
+    <field name="header">上年金额</field><field name="expression_label">balance</field>
+    <field name="column_group">comparison</field>
+  </record>
+
+  <record id="cn_row_pl_1" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">10</field>
+    <field name="row_no">1</field><field name="name">一、营业收入</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_oi"/>
+  </record>
+  <record id="cn_row_pl_2" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">20</field>
+    <field name="row_no">2</field><field name="name">减：营业成本</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_oc"/>
+  </record>
+  <record id="cn_row_pl_3" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">30</field>
+    <field name="row_no">3</field><field name="name">税金及附加</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ots"/>
+  </record>
+  <record id="cn_row_pl_4" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">40</field>
+    <field name="row_no">4</field><field name="name">其中：消费税</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ct"/>
+  </record>
+  <record id="cn_row_pl_5" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">50</field>
+    <field name="row_no">5</field><field name="name">营业税</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_bts"/>
+  </record>
+  <record id="cn_row_pl_6" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">60</field>
+    <field name="row_no">6</field><field name="name">城市维护建设税</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_umct"/>
+  </record>
+  <record id="cn_row_pl_7" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">70</field>
+    <field name="row_no">7</field><field name="name">资源税</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_rt"/>
+  </record>
+  <record id="cn_row_pl_8" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">80</field>
+    <field name="row_no">8</field><field name="name">土地增值税</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_lvat"/>
+  </record>
+  <record id="cn_row_pl_9" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">90</field>
+    <field name="row_no">9</field><field name="name">城镇土地使用税、房产税、车船税、印花税</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_lpvs"/>
+  </record>
+  <record id="cn_row_pl_10" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">100</field>
+    <field name="row_no">10</field><field name="name">教育费附加、矿产资源补偿费、排污费</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_emp"/>
+  </record>
+  <record id="cn_row_pl_11" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">110</field>
+    <field name="row_no">11</field><field name="name">销售费用</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_se"/>
+  </record>
+  <record id="cn_row_pl_12" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">120</field>
+    <field name="row_no">12</field><field name="name">其中：商品维修费</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_prf"/>
+  </record>
+  <record id="cn_row_pl_13" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">130</field>
+    <field name="row_no">13</field><field name="name">广告费和业务宣传费</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ape"/>
+  </record>
+  <record id="cn_row_pl_14" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">140</field>
+    <field name="row_no">14</field><field name="name">管理费用</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ae"/>
+  </record>
+  <record id="cn_row_pl_15" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">150</field>
+    <field name="row_no">15</field><field name="name">其中：开办费</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_sue"/>
+  </record>
+  <record id="cn_row_pl_16" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">160</field>
+    <field name="row_no">16</field><field name="name">业务招待费</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ee"/>
+  </record>
+  <record id="cn_row_pl_17" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">170</field>
+    <field name="row_no">17</field><field name="name">研究费用</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_re"/>
+  </record>
+  <record id="cn_row_pl_18" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">180</field>
+    <field name="row_no">18</field><field name="name">财务费用</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_fe"/>
+  </record>
+  <record id="cn_row_pl_19" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">190</field>
+    <field name="row_no">19</field><field name="name">其中：利息费用（收入以“-”号填列）</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ie"/>
+  </record>
+  <record id="cn_row_pl_20" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">200</field>
+    <field name="row_no">20</field><field name="name">加：投资收益（损失以“-”号填列）</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ii"/>
+  </record>
+  <record id="cn_row_pl_21" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">210</field>
+    <field name="row_no">21</field><field name="name">二、营业利润（亏损以“-”号填列）</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_op"/>
+  </record>
+  <record id="cn_row_pl_22" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">220</field>
+    <field name="row_no">22</field><field name="name">加：营业外收入</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_noi"/>
+  </record>
+  <record id="cn_row_pl_23" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">230</field>
+    <field name="row_no">23</field><field name="name">其中：政府补助</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_gs"/>
+  </record>
+  <record id="cn_row_pl_24" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">240</field>
+    <field name="row_no">24</field><field name="name">减：营业外支出</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_noe"/>
+  </record>
+  <record id="cn_row_pl_25" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">250</field>
+    <field name="row_no">25</field><field name="name">其中：坏账损失</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_bde"/>
+  </record>
+  <record id="cn_row_pl_26" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">260</field>
+    <field name="row_no">26</field><field name="name">无法收回的长期债券投资损失</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ullb"/>
+  </record>
+  <record id="cn_row_pl_27" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">270</field>
+    <field name="row_no">27</field><field name="name">无法收回的长期股权投资损失</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ulle"/>
+  </record>
+  <record id="cn_row_pl_28" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">280</field>
+    <field name="row_no">28</field><field name="name">自然灾害等不可抗力因素造成的损失</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_lcfm"/>
+  </record>
+  <record id="cn_row_pl_29" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">290</field>
+    <field name="row_no">29</field><field name="name">税收滞纳金</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ltpe"/>
+  </record>
+  <record id="cn_row_pl_30" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">300</field>
+    <field name="row_no">30</field><field name="name">三、利润总额（亏损总额以“-”号填列）</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_gp"/>
+  </record>
+  <record id="cn_row_pl_31" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">310</field>
+    <field name="row_no">31</field><field name="name">减：所得税费用</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_ite"/>
+  </record>
+  <record id="cn_row_pl_32" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_pl"/><field name="sequence">320</field>
+    <field name="row_no">32</field><field name="name">四、净利润（净亏损以“-”号填列）</field>
+    <field name="report_line_id" ref="l10n_cn_reports.l10n_cn_assbe_pl_cns_nep"/>
+  </record>
+
+</odoo>

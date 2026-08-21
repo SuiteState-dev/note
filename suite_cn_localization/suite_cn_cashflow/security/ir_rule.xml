@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        多公司隔离：全局项目（company_id 空）对所有公司可见；带 company_id 的
+        自定义项目仅其所属公司可见。company_ids = 用户当前允许的公司集合（Odoo 19
+        多公司标准上下文变量）。R11-T2/P4。
+    -->
+    <record id="cash_flow_item_company_rule" model="ir.rule">
+        <field name="name">Cash Flow Item: multi-company</field>
+        <field name="model_id" ref="model_cash_flow_item"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+</odoo>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- 增强上游 l10n_cn 记账凭证模板（就地扩展，patch 原模板 → 原报表动作直接渲染
+             增强版）：中文化 + 凭证字号 + 一级—明细科目串。复用外层 boxed 版式 / 金额大写 /
+             附件张数（缺的是合规要素，不是从零起）。签章仅留栏位不做工作流（M3b，等信号）。 -->
+        <template id="report_voucher_document_cn"
+                  inherit_id="l10n_cn.report_voucher_document">
+            <xpath expr="//div[hasclass('page')]" position="replace">
+                <div class="page">
+                    <div align="center">
+                        <h2><span>记账凭证</span></h2>
+                    </div>
+
+                    <div id="informations" class="row mb8">
+                        <div class="col-4">
+                            <span t-field="o.company_id.name"/>
+                        </div>
+                        <div class="col-3" name="l10n_cn_voucher_no">
+                            <strong>凭证字号：</strong>
+                            <span t-field="o.l10n_cn_voucher_display"/>
+                        </div>
+                        <div class="col-3" name="date">
+                            <strong>日期：</strong>
+                            <span t-field="o.date"/>
+                        </div>
+                        <div class="col-2" name="attachments">
+                            <strong>附件张数：</strong>
+                            <span t-esc="o._count_attachments()"/>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered o_main_table" name="entry_line_table">
+                        <thead>
+                            <tr>
+                                <th name="th_summary" class="text-center"><span>摘要</span></th>
+                                <th name="th_account" class="text-center"><span>会计科目</span></th>
+                                <th name="th_debit" class="text-center"><span>借方金额</span></th>
+                                <th name="th_credit" class="text-center"><span>贷方金额</span></th>
+                            </tr>
+                        </thead>
+                        <tbody class="invoice_tbody">
+                            <t t-set="total_debit" t-value="0"/>
+                            <t t-set="total_credit" t-value="0"/>
+                            <t t-foreach="o.line_ids" t-as="line">
+                                <t t-set="total_debit" t-value="total_debit + line.debit"/>
+                                <t t-set="total_credit" t-value="total_credit + line.credit"/>
+                                <tr>
+                                    <td name="summary">
+                                        <span t-field="line.name" t-options="{'widget': 'text'}"/>
+                                    </td>
+                                    <td name="account">
+                                        <span t-esc="o._l10n_cn_account_path(line)"/>
+                                    </td>
+                                    <td name="debit" class="text-end">
+                                        <span t-if="line.debit != 0" t-esc="line.debit"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                    <td name="credit" class="text-end">
+                                        <span t-if="line.credit != 0" t-esc="line.credit"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td name="total_words" colspan="2">
+                                    <strong>金额合计（大写）：</strong>
+                                    <span t-esc="o._convert_to_amount_in_word(total_debit)"/>
+                                </td>
+                                <td name="total_debit" class="text-end">
+                                    <span t-esc="total_debit"
+                                          t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                </td>
+                                <td name="total_credit" class="text-end">
+                                    <span t-esc="total_credit"
+                                          t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- 签章栏：本轮只留栏位，签章工作流属 M3b（等客户信号），别顺手做。 -->
+                    <div id="staff" class="row mt16" style="color:black">
+                        <div class="col-3"><strong>主管：</strong></div>
+                        <div class="col-3"><strong>记账：</strong></div>
+                        <div class="col-3"><strong>复核：</strong></div>
+                        <div class="col-3"><strong>制单：</strong></div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+
+        <!-- T3-4:官方 l10n_cn.account_voucher_cn 的打印绑定原为 binding_view_types='form'
+             (仅表单可打印)→ 加 list,使【列表视图打印菜单】可达,支持按月份全选批量打印。
+             模板本身 t-foreach docs 一凭证一页,已支持多条;docs 正序由 report.l10n_cn.
+             report_voucher._get_report_values 保证(T3-3)。 -->
+        <record id="l10n_cn.account_voucher_cn" model="ir.actions.report">
+            <field name="binding_view_types">list,form</field>
+        </record>
+    </data>
+</odoo>

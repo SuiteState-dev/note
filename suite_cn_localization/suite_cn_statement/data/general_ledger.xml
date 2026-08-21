@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+      中式总分类账 (R49 交付 → R50 返工)。
+
+      法源=《会计基础工作规范》§63(二)+§60(七) + 金蝶总账/明细账导出件原件（项目档 v42
+      §4.5.22，唯一归宿）：一个科目一段、行=期间、结出余额后在「借或贷」栏注明方向。Odoo 官方
+      GL 只出三栏式明细分类账，无月汇总总账形态 —— 真缺口。
+
+      【新建】报表，挂官方 General Ledger 变体（root_report_id）取菜单可达（同 R47 科目余额表
+      挂官方 TB 先例）。自带 custom_handler（suite.cn.general.ledger.report.handler），官方
+      GL 记录/引擎/handler 三个都不碰（惯例31：禁对象不禁手段）。
+
+      与科目余额表(R47/R48)的不同(§60(七)，别照抄)——
+        1. 方向是【一个标签栏】不是两个栏：单余额栏 + 「借/贷/平」方向栏。
+           🔴 R50 返工：R49 的「方向=余额实际符号」被原件证伪、作废。改回【属性制】——与科目
+           余额表【共用同一条规则】(§4.5.22 一)：余额==0→平/余额空；余额!=0→方向取科目余额
+           方向属性(借/贷)、不随符号迁移；余额带符号(实际方向与属性相反为负)。⇒ 与 TB
+           【表现完全一致】(3103 属性贷/实际借：TB 贷栏 −31,989.46、GL 方向贷/余额 −31,989.46)，
+           客户两表对账看不到差异。
+        2. 行=期间不是科目：每个一级科目一段；段内 期初余额行 + 每有发生额期(本期合计 + 本年
+           累计)两行、本年累计【逐期滚动】+ 只期初科目补一累计(0)行。
+        3. 只出一级科目(总账=总分类账)⇒ 直接复用 R47 的点分前缀 roll-up 键。
+
+      纯 _dynamic_lines_generator 报表(行由 handler 全权生成、无静态 line_ids)：行=期间不吃
+      列式 date_scope 那套，故用 dynamic 生成器(官方 GL 同款机制)、非 R47 的表达式引擎+后处理。
+      取数经 _get_report_query(options, date_scope) 拿期初(to_beginning_of_fiscalyear)与
+      本年度发生额(from_fiscalyear，再 date_trunc('month') 按月分组)，honoring 期间/日记账/
+      过账/多公司 全部筛选。
+    -->
+    <record id="cn_general_ledger" model="account.report">
+        <field name="name">总分类账</field>
+        <field name="root_report_id" ref="account_reports.general_ledger_report"/>
+        <field name="availability_condition">country</field>
+        <field name="country_id" ref="base.cn"/>
+        <field name="custom_handler_model_id"
+               ref="model_suite_cn_general_ledger_report_handler"/>
+        <field name="filter_date_range" eval="True"/>
+        <field name="filter_multi_company">selector</field>
+        <field name="filter_journals" eval="True"/>
+        <field name="filter_unfold_all" eval="True"/>
+        <!-- 层级绝不走 account.group（同 TB）：一级由 handler 点分前缀合成。 -->
+        <field name="filter_hierarchy">never</field>
+        <field name="default_opening_date_filter">this_year</field>
+        <field name="search_bar" eval="True"/>
+        <field name="column_ids">
+            <record id="cn_gl_col_debit" model="account.report.column">
+                <field name="name">借方发生额</field>
+                <field name="expression_label">debit_amt</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">10</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <record id="cn_gl_col_credit" model="account.report.column">
+                <field name="name">贷方发生额</field>
+                <field name="expression_label">credit_amt</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">20</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <!-- 方向 = 借/贷/平 标签栏（§60(七)，属性制）。string 型、非 blank_if_zero（恒显）。 -->
+            <record id="cn_gl_col_direction" model="account.report.column">
+                <field name="name">方向</field>
+                <field name="expression_label">direction</field>
+                <field name="figure_type">string</field>
+                <field name="sequence">30</field>
+            </record>
+            <!-- 余额 = 单栏、带符号（实际方向与属性相反为负；方向由上一栏承载）；平时 handler
+                 传 None ⇒ 留空，故加 blank_if_zero 双保险。 -->
+            <record id="cn_gl_col_balance" model="account.report.column">
+                <field name="name">余额</field>
+                <field name="expression_label">balance</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">40</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+        </field>
+    </record>
+</odoo>

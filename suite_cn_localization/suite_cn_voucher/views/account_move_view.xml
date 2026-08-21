@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- 中式凭证字/号在凭证表单上可见可设（界面可达）：凭证字草稿可改、过账后锁；
+             凭证号只读、过账时自动分配。仅中国公司显示。 -->
+        <record id="view_move_form_l10n_cn_voucher" model="ir.ui.view">
+            <field name="name">suite.cn.voucher.account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='ref']" position="after">
+                    <field name="l10n_cn_voucher_word"
+                           invisible="country_code != 'CN'"
+                           readonly="state != 'draft'"/>
+                    <field name="l10n_cn_voucher_display"
+                           string="凭证字号"
+                           invisible="country_code != 'CN' or not l10n_cn_voucher_number"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- T3-1/2:凭证字号上【列表视图】——按月份批量打印前的核对面(惯例1:数值正确≠用户
+             找得到;惯例11:入口可见≠可用)。凭证号列默认显示、可点表头排序;凭证字列 optional
+             隐藏、可选显。仅中国公司显示(column_invisible 按 country_code 收)。 -->
+        <record id="view_move_tree_l10n_cn_voucher" model="ir.ui.view">
+            <field name="name">suite.cn.voucher.account.move.list</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="country_code" column_invisible="1"/>
+                    <field name="l10n_cn_voucher_word" optional="hide"
+                           column_invisible="country_code != 'CN'"/>
+                    <field name="l10n_cn_voucher_number" string="凭证号"
+                           optional="show"
+                           column_invisible="country_code != 'CN'"/>
+                    <field name="l10n_cn_voucher_display" string="凭证字号"
+                           optional="hide"
+                           column_invisible="country_code != 'CN'"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- T3-2:搜索——按凭证字过滤、按凭证字分组。凭证号可作 order 列(存储 Integer)。 -->
+        <record id="view_account_move_filter_l10n_cn_voucher" model="ir.ui.view">
+            <field name="name">suite.cn.voucher.account.move.search</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_move_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='ref']" position="after">
+                    <field name="l10n_cn_voucher_number" string="凭证号"/>
+                    <field name="l10n_cn_voucher_word" string="凭证字"/>
+                </xpath>
+                <xpath expr="//filter[@name='status']" position="after">
+                    <separator/>
+                    <filter string="凭证字" name="group_l10n_cn_voucher_word"
+                            context="{'group_by': 'l10n_cn_voucher_word'}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

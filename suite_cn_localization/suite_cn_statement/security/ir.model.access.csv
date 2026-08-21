@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cn_stmt_form_read,suite.cn.statement.form.read,model_suite_cn_statement_form,account.group_account_readonly,1,0,0,0
+access_cn_stmt_form_mgr,suite.cn.statement.form.mgr,model_suite_cn_statement_form,account.group_account_manager,1,1,1,1
+access_cn_stmt_col_read,suite.cn.statement.column.read,model_suite_cn_statement_column,account.group_account_readonly,1,0,0,0
+access_cn_stmt_col_mgr,suite.cn.statement.column.mgr,model_suite_cn_statement_column,account.group_account_manager,1,1,1,1
+access_cn_stmt_row_read,suite.cn.statement.row.read,model_suite_cn_statement_row,account.group_account_readonly,1,0,0,0
+access_cn_stmt_row_mgr,suite.cn.statement.row.mgr,model_suite_cn_statement_row,account.group_account_manager,1,1,1,1
+access_cn_stmt_export_ro,suite.cn.statement.export.ro,model_suite_cn_statement_export,account.group_account_readonly,1,1,1,0
+access_cn_stmt_export_mgr,suite.cn.statement.export.mgr,model_suite_cn_statement_export,account.group_account_manager,1,1,1,1
+access_cn_tb_export_ro,suite.cn.tb.export.ro,model_suite_cn_tb_export,account.group_account_readonly,1,1,1,0
+access_cn_tb_export_mgr,suite.cn.tb.export.mgr,model_suite_cn_tb_export,account.group_account_manager,1,1,1,1

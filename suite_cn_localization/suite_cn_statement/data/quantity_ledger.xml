@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+      中式数量金额式明细分类账 (R53-T1)。
+
+      法源 = 《会计基础工作规范》§63(二) + 金蝶数量金额式明细账【打印模板 + 导出件双证】
+      （项目档 v46 §4.5.23，唯一归宿；kingdee v6 §3.6b 五）。
+
+      🔴 与前三件（余额表/总账/三栏式明细账）的根本不同：【换取数源】。
+      前三件走 account.move.line；数量金额式每行要给【数量】，而会计分录侧数量不可用
+      （aml.quantity 在 display_type='product' 下恒占位 1.0，R53 探针 verified；v19 已移除
+      stock.valuation.layer）⇒ 本件从 `stock.move` 取【数量+金额】，按 product→估值科目 归集。
+      详见 handler docstring 与 design §17.7。
+
+      【新建】报表，挂官方 General Ledger 变体（root_report_id）取菜单可达（同 R47/R49/R51
+      先例）。自带 custom_handler（suite.cn.quantity.ledger.report.handler），官方 GL
+      记录/引擎/handler 三个都不碰（惯例31：禁对象不禁手段）。
+
+      13 列（摘要落 name，导出件锚三级表头 借/贷/余额 × 数量/单价/金额）：
+        日期 · 凭证字号 · 单位 · 借方(数量/单价/金额) · 贷方(数量/单价/金额) ·
+        方向 · 余额(数量/单价/金额)。
+      🟡「单位」列内容形态 unknown（原件通栏空）：留空列位、不猜（design 诚实边界3）。
+    -->
+    <record id="cn_quantity_ledger" model="account.report">
+        <field name="name">数量金额式明细分类账</field>
+        <field name="root_report_id" ref="account_reports.general_ledger_report"/>
+        <field name="availability_condition">country</field>
+        <field name="country_id" ref="base.cn"/>
+        <field name="custom_handler_model_id"
+               ref="model_suite_cn_quantity_ledger_report_handler"/>
+        <field name="filter_date_range" eval="True"/>
+        <field name="filter_multi_company">selector</field>
+        <field name="filter_unfold_all" eval="True"/>
+        <field name="filter_hierarchy">never</field>
+        <field name="default_opening_date_filter">this_year</field>
+        <field name="search_bar" eval="True"/>
+        <field name="column_ids">
+            <record id="cn_ql_col_date" model="account.report.column">
+                <field name="name">日期</field>
+                <field name="expression_label">date_txt</field>
+                <field name="figure_type">string</field>
+                <field name="sequence">10</field>
+            </record>
+            <record id="cn_ql_col_voucher" model="account.report.column">
+                <field name="name">凭证字号</field>
+                <field name="expression_label">voucher</field>
+                <field name="figure_type">string</field>
+                <field name="sequence">20</field>
+            </record>
+            <record id="cn_ql_col_unit" model="account.report.column">
+                <field name="name">单位</field>
+                <field name="expression_label">unit</field>
+                <field name="figure_type">string</field>
+                <field name="sequence">30</field>
+            </record>
+            <!-- 借方发生额：数量 / 单价 / 金额 -->
+            <record id="cn_ql_col_dqty" model="account.report.column">
+                <field name="name">借方数量</field>
+                <field name="expression_label">d_qty</field>
+                <field name="figure_type">float</field>
+                <field name="sequence">40</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <record id="cn_ql_col_dprice" model="account.report.column">
+                <field name="name">借方单价</field>
+                <field name="expression_label">d_price</field>
+                <field name="figure_type">float</field>
+                <field name="sequence">50</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <record id="cn_ql_col_damt" model="account.report.column">
+                <field name="name">借方金额</field>
+                <field name="expression_label">d_amt</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">60</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <!-- 贷方发生额：数量 / 单价 / 金额 -->
+            <record id="cn_ql_col_cqty" model="account.report.column">
+                <field name="name">贷方数量</field>
+                <field name="expression_label">c_qty</field>
+                <field name="figure_type">float</field>
+                <field name="sequence">70</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <record id="cn_ql_col_cprice" model="account.report.column">
+                <field name="name">贷方单价</field>
+                <field name="expression_label">c_price</field>
+                <field name="figure_type">float</field>
+                <field name="sequence">80</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <record id="cn_ql_col_camt" model="account.report.column">
+                <field name="name">贷方金额</field>
+                <field name="expression_label">c_amt</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">90</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <!-- 方向（借/贷/平，属性由金额定，恒显非 blank） -->
+            <record id="cn_ql_col_dir" model="account.report.column">
+                <field name="name">方向</field>
+                <field name="expression_label">direction</field>
+                <field name="figure_type">string</field>
+                <field name="sequence">100</field>
+            </record>
+            <!-- 余额：数量 / 单价 / 金额 -->
+            <record id="cn_ql_col_bqty" model="account.report.column">
+                <field name="name">余额数量</field>
+                <field name="expression_label">bal_qty</field>
+                <field name="figure_type">float</field>
+                <field name="sequence">110</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <record id="cn_ql_col_bprice" model="account.report.column">
+                <field name="name">余额单价</field>
+                <field name="expression_label">bal_price</field>
+                <field name="figure_type">float</field>
+                <field name="sequence">120</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+            <record id="cn_ql_col_bamt" model="account.report.column">
+                <field name="name">余额金额</field>
+                <field name="expression_label">bal_amt</field>
+                <field name="figure_type">monetary</field>
+                <field name="sequence">130</field>
+                <field name="blank_if_zero" eval="True"/>
+            </record>
+        </field>
+    </record>
+</odoo>

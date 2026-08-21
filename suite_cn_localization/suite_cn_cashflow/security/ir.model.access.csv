@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cash_flow_item_user,cash.flow.item user,model_cash_flow_item,account.group_account_readonly,1,0,0,0
+access_cash_flow_item_manager,cash.flow.item manager,model_cash_flow_item,account.group_account_manager,1,1,1,1
+access_cashflow_config_manager,suite.cn.cashflow.config manager,model_suite_cn_cashflow_config,account.group_account_manager,1,1,1,1
+access_cashflow_line_export_manager,suite.cn.cashflow.line.export manager,model_suite_cn_cashflow_line_export,account.group_account_manager,1,1,1,1

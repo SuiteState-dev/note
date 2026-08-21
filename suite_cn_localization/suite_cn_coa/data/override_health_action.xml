@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- R37-T3 (a):只读自检 server action —— 任意库(含存量客户库)可运行,不改任何数据,
+         回「官方报表覆盖未生效(漏放)」清单。位置:设置 → 技术 → 自动化 → 服务器动作。
+         配合 (b) _apply_all 末尾自检:装/升即自查,此处补「事后随时手查」。 -->
+    <record id="action_check_overrides_effective" model="ir.actions.server">
+        <field name="name">检查官方报表覆盖是否生效 (R37-T3 漏放自检)</field>
+        <field name="model_id" ref="model_suite_cn_coa_report_override"/>
+        <field name="state">code</field>
+        <field name="code">
+missing = model._check_overrides_effective()
+if missing:
+    body = '\n'.join('· %s[%s] 现=%s 应=%s (%s)' % (
+        m['line_xmlid'], m.get('label'), m.get('current'), m.get('want'), m.get('reason'))
+        for m in missing)
+    action = {
+        'type': 'ir.actions.client', 'tag': 'display_notification',
+        'params': {
+            'title': 'R37-T3 覆盖漏放自检',
+            'message': '⚠ %d 条官方报表覆盖未生效(漏放):\n%s' % (len(missing), body),
+            'type': 'danger', 'sticky': True,
+        },
+    }
+else:
+    action = {
+        'type': 'ir.actions.client', 'tag': 'display_notification',
+        'params': {
+            'title': 'R37-T3 覆盖漏放自检',
+            'message': '✅ 全部官方报表覆盖均已生效,无漏放。',
+            'type': 'success', 'sticky': False,
+        },
+    }
+        </field>
+    </record>
+</odoo>

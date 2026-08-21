@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+
+  <!-- ======= 现金流量表 月季报 (bridge: CF x statement) ======= -->
+  <record id="cn_form_cf" model="suite.cn.statement.form">
+    <field name="report_id" ref="suite_cn_cashflow.cn_cash_flow_s"/>
+    <field name="title">现金流量表</field>
+    <field name="title_suffix">（适用执行小企业会计准则的企业）</field>
+    <field name="form_no">会小企03表</field>
+    <field name="sheet_name">现金流量表_月季报</field>
+    <field name="layout">single</field>
+    <field name="period_mode">range</field>
+    <field name="period_scope">monthly_quarterly</field>
+    <field name="standard_version">na</field>
+  </record>
+  <!-- R27: 官方月季报现金流量表列头=「本期金额」(季报时本期=本季，非本月)。
+       逐格对位 tests/fixtures 月季报.xls (4,3)。列序(本期左|累计右)本已正确。 -->
+  <record id="cn_col_cf_1" model="suite.cn.statement.column">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">10</field>
+    <field name="header">本期金额</field><field name="expression_label">balance</field>
+  </record>
+  <record id="cn_col_cf_2" model="suite.cn.statement.column">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">20</field>
+    <field name="header">本年累计金额</field><field name="expression_label">ytd</field>
+  </record>
+
+  <!-- ======= 现金流量表 年报 (R26-T2): 本年累计金额 | 上年金额.
+       行借用月季报 cn_form_cf (rows_from_id). ======= -->
+  <record id="cn_form_cf_annual" model="suite.cn.statement.form">
+    <field name="report_id" ref="suite_cn_cashflow.cn_cash_flow_s"/>
+    <field name="title">现金流量表</field>
+    <field name="title_suffix">（适用执行小企业会计准则的企业）</field>
+    <field name="form_no">会小企03表</field>
+    <field name="sheet_name">现金流量表_年</field>
+    <field name="layout">single</field>
+    <field name="period_mode">range</field>
+    <field name="period_scope">annual</field>
+    <field name="standard_version">na</field>
+    <field name="rows_from_id" ref="cn_form_cf"/>
+  </record>
+  <record id="cn_col_cf_annual_1" model="suite.cn.statement.column">
+    <field name="form_id" ref="cn_form_cf_annual"/><field name="sequence">10</field>
+    <field name="header">本年累计金额</field><field name="expression_label">ytd</field>
+    <field name="column_group">primary</field>
+  </record>
+  <record id="cn_col_cf_annual_2" model="suite.cn.statement.column">
+    <field name="form_id" ref="cn_form_cf_annual"/><field name="sequence">20</field>
+    <field name="header">上年金额</field><field name="expression_label">balance</field>
+    <field name="column_group">comparison</field>
+  </record>
+
+  <record id="cn_row_cf_10" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">10</field>
+    <field name="row_no"></field><field name="name">一、经营活动产生的现金流量：</field>
+    <field name="is_header" eval="True"/>
+  </record>
+  <record id="cn_row_cf_20" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">20</field>
+    <field name="row_no">1</field><field name="name">销售产成品、商品、提供劳务收到的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_1"/>
+  </record>
+  <record id="cn_row_cf_30" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">30</field>
+    <field name="row_no">2</field><field name="name">收到其他与经营活动有关的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_2"/>
+  </record>
+  <record id="cn_row_cf_40" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">40</field>
+    <field name="row_no">3</field><field name="name">购买原材料、商品、接受劳务支付的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_3"/>
+  </record>
+  <record id="cn_row_cf_50" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">50</field>
+    <field name="row_no">4</field><field name="name">支付的职工薪酬</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_4"/>
+  </record>
+  <record id="cn_row_cf_60" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">60</field>
+    <field name="row_no">5</field><field name="name">支付的税费</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_5"/>
+  </record>
+  <record id="cn_row_cf_70" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">70</field>
+    <field name="row_no">6</field><field name="name">支付其他与经营活动有关的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_6"/>
+  </record>
+  <record id="cn_row_cf_80" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">80</field>
+    <field name="row_no">7</field><field name="name">经营活动产生的现金流量净额</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_7"/>
+  </record>
+  <record id="cn_row_cf_90" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">90</field>
+    <field name="row_no"></field><field name="name">二、投资活动产生的现金流量：</field>
+    <field name="is_header" eval="True"/>
+  </record>
+  <record id="cn_row_cf_100" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">100</field>
+    <field name="row_no">8</field><field name="name">收回短期投资、长期债券投资和长期股权投资收到的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_8"/>
+  </record>
+  <record id="cn_row_cf_110" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">110</field>
+    <field name="row_no">9</field><field name="name">取得投资收益收到的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_9"/>
+  </record>
+  <record id="cn_row_cf_120" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">120</field>
+    <field name="row_no">10</field><field name="name">处置固定资产、无形资产和其他非流动资产收回的现金净额</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_10"/>
+  </record>
+  <record id="cn_row_cf_130" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">130</field>
+    <field name="row_no">11</field><field name="name">短期投资、长期债券投资和长期股权投资支付的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_11"/>
+  </record>
+  <record id="cn_row_cf_140" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">140</field>
+    <field name="row_no">12</field><field name="name">购建固定资产、无形资产和其他非流动资产支付的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_12"/>
+  </record>
+  <record id="cn_row_cf_150" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">150</field>
+    <field name="row_no">13</field><field name="name">投资活动产生的现金流量净额</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_13"/>
+  </record>
+  <record id="cn_row_cf_160" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">160</field>
+    <field name="row_no"></field><field name="name">三、筹资活动产生的现金流量：</field>
+    <field name="is_header" eval="True"/>
+  </record>
+  <record id="cn_row_cf_170" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">170</field>
+    <field name="row_no">14</field><field name="name">取得借款收到的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_14"/>
+  </record>
+  <record id="cn_row_cf_180" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">180</field>
+    <field name="row_no">15</field><field name="name">吸收投资者投资收到的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_15"/>
+  </record>
+  <record id="cn_row_cf_190" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">190</field>
+    <field name="row_no">16</field><field name="name">偿还借款本金支付的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_16"/>
+  </record>
+  <record id="cn_row_cf_200" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">200</field>
+    <field name="row_no">17</field><field name="name">偿还借款利息支付的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_17"/>
+  </record>
+  <record id="cn_row_cf_210" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">210</field>
+    <field name="row_no">18</field><field name="name">分配利润支付的现金</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_18"/>
+  </record>
+  <record id="cn_row_cf_220" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">220</field>
+    <field name="row_no">19</field><field name="name">筹资活动产生的现金流量净额</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_19"/>
+  </record>
+  <record id="cn_row_cf_230" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">230</field>
+    <field name="row_no">20</field><field name="name">四、现金净增加额</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_20"/>
+  </record>
+  <record id="cn_row_cf_240" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">240</field>
+    <field name="row_no">21</field><field name="name">加：期初现金余额</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_21"/>
+  </record>
+  <record id="cn_row_cf_250" model="suite.cn.statement.row">
+    <field name="form_id" ref="cn_form_cf"/><field name="sequence">250</field>
+    <field name="row_no">22</field><field name="name">五、期末现金余额</field>
+    <field name="report_line_id" ref="suite_cn_cashflow.cn_cf_s_22"/>
+  </record>
+
+</odoo>
